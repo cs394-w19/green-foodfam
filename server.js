@@ -30,18 +30,18 @@ app.get("/restaurant/info", (req, res) => {
     });
 });
 
-//simple search by term and location
-client
-  .search({
-    term: "restaurant",
-    location: "evanston, il"
-  })
-  .then(response => {
-    const joints = response.jsonBody.businesses;
-    joints.forEach(item => {
-      console.log(item.name);
-    });
-  })
-  .catch(e => {
-    console.log(e);
-  });
+// //simple search by term and location
+// client
+//   .search({
+//     term: "restaurant",
+//     location: "evanston, il"
+//   })
+//   .then(response => {
+//     const joints = response.jsonBody.businesses;
+//     joints.forEach(item => {
+//       console.log(item.name);
+//     });
+//   })
+//   .catch(e => {
+//     console.log(e);
+//   });
