@@ -1,21 +1,43 @@
 .App {
   text-align: center;
+  background-image: linear-gradient(to bottom right, #32d374, #1b8e4a);
+  min-height: 100vh;
+  color: white;
+}
+
+.appHeader{
+  font-size: 48pt;
+  font-weight: 900;
+
 }
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 40vmin;
+  margin-top: 15vh;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.locationInput{
+  height: 30px;
+  width: 60%;
+  padding: 10px 20px;
+  border-radius: 40px;
+  border: 0;
+  font-size: 16pt;
+  margin-top: 10px;
+}
+
+.goButton{
+  width: 40%;
+  padding: 10px 20px;
+  border-radius: 40px;
+  background-color: #fc8888;
   color: white;
+  font-size: 16pt;
+  font-weight: 600;
+  margin-top: 20px;
+  border: 0;
+  box-shadow: 1px 1px 30px -3px #666;
 }
 
 .App-link {
