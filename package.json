@@ -1,0 +1,22 @@
+{
+  "name": "green-foodfam",
+  "version": "1.0.0",
+  "description": "1st project for Green To run app, clone repo locally, navigate to foodfam directory, run 'yarn start'",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs394-w19/green-foodfam.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cs394-w19/green-foodfam/issues"
+  },
+  "homepage": "https://github.com/cs394-w19/green-foodfam#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
