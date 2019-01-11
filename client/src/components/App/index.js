@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import { Link } from 'react-router-dom'
 
 class App extends Component {
   state = {
@@ -31,7 +32,9 @@ class App extends Component {
         <div className='appHeader'>FoodFam.</div>
         <input className='locationInput' type='text' placeholder='location...'/>
         <br/>
-        <button className='goButton'>GO</button>
+        <Link to='/price'>
+          <button className='goButton'>GO</button>
+        </Link>
       </div>
     );
   }

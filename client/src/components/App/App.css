@@ -5,10 +5,31 @@
   color: white;
 }
 
+a{
+  text-decoration: none;
+}
+
 .appHeader{
   font-size: 48pt;
   font-weight: 900;
+}
 
+.appQuestion{
+  font-size: 32pt;
+  font-weight: 900;
+  padding: 30% 20px 10px 20px;
+}
+
+.appRecommend{
+  font-size: 28pt;
+  font-weight: 900;
+  padding: 30% 10px 10px 10px;
+}
+
+.categorySelector{
+  background-color: white;
+  font-size: 14pt;
+  font-weight: 500;
 }
 
 .App-logo {
