@@ -16,7 +16,7 @@ class Result extends Component {
   componentWillMount() {
     // Example postRequest with data. Replace static with form input
     this.postRequest("/restaurant/select", {
-      location: "San Francisco, CA"
+      location: this.props.location.state.loc
     })
       .then(res => {
         const restaurant = res.selection;

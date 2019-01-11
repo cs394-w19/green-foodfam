@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 class Price extends Component {
   state = {
@@ -8,20 +8,25 @@ class Price extends Component {
   };
 
   render() {
-    const yelpList = ['Mexican','Thai','American']
-    const categories = yelpList.map((category, i)=>{
-      return(
-        <Link key={i} to='/result' style={{textAlign:'center'}}>
-          <div className='goButton'>{category}</div>
+    const yelpList = ["Mexican", "Thai", "American"];
+    const categories = yelpList.map((category, i) => {
+      return (
+        <Link
+          key={i}
+          to={{
+            pathname: "/result",
+            state: { loc: this.props.location.state.loc }
+          }}
+          style={{ textAlign: "center" }}
+        >
+          <div className="goButton">{category}</div>
         </Link>
-      )
-    })
+      );
+    });
     return (
       <div className="App">
-        <div className='appQuestion'>What are you in the mood for?</div>
-        <div style={{marginLeft:'32%'}}>
-          {categories}
-        </div>
+        <div className="appQuestion">What are you in the mood for?</div>
+        <div style={{ marginLeft: "32%" }}>{categories}</div>
       </div>
     );
   }

@@ -11,7 +11,12 @@ class Price extends Component {
     return (
       <div className="App">
         <div className="appQuestion">What's your price range?</div>
-        <Link to="/category">
+        <Link
+          to={{
+            pathname: "/category",
+            state: { loc: this.props.location.state.loc }
+          }}
+        >
           <button className="goButton">$</button>
           <br />
           <button className="goButton">$$</button>

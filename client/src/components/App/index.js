@@ -4,7 +4,14 @@ import { Link } from "react-router-dom";
 
 class App extends Component {
   state = {
-    data: null
+    data: null,
+    location: ""
+  };
+
+  updateLocation = e => {
+    this.setState({
+      location: e.target.value
+    });
   };
 
   render() {
@@ -16,9 +23,15 @@ class App extends Component {
           className="locationInput"
           type="text"
           placeholder="Evanston, Illinois"
+          onChange={e => this.updateLocation(e)}
         />
         <br />
-        <Link to="/price">
+        <Link
+          to={{
+            pathname: "/price",
+            state: { loc: `${this.state.location}` }
+          }}
+        >
           <button className="goButton">GO</button>
         </Link>
       </div>
