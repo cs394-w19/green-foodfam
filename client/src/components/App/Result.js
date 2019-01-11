@@ -47,7 +47,6 @@ class Result extends Component {
       if (res.status !== 200) {
         throw Error(res.message);
       }
-
       return res.data;
     }
   };
