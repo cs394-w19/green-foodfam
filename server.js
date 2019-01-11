@@ -15,7 +15,7 @@ app.get("/express_backend", (req, res) => {
   res.send({ express: "From server: Express backend connected! hello world" });
 });
 
-app.get("/restaurant/info", (req, res) => {
+app.get("/restaurant/select", (req, res) => {
   client
     .search({
       term: "restaurant",
@@ -23,7 +23,7 @@ app.get("/restaurant/info", (req, res) => {
     })
     .then(response => {
       const joints = response.jsonBody.businesses;
-      res.send({ express: joints[0] });
+      res.send({ express: { selection: joints[0] } });
     })
     .catch(e => {
       res.status(400).send(e);
