@@ -19,6 +19,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "nodemon": "^1.18.9",
-    "yelp-fusion": "^2.2.1"
+    "yelp-fusion": "^2.2.1",
+    "react-router-dom": "^4.3.1"
   }
 }
