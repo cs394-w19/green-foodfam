@@ -17,9 +17,10 @@
   },
   "homepage": "https://github.com/cs394-w19/green-foodfam#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "nodemon": "^1.18.9",
-    "yelp-fusion": "^2.2.1",
-    "react-router-dom": "^4.3.1"
+    "react-router-dom": "^4.3.1",
+    "yelp-fusion": "^2.2.1"
   }
 }

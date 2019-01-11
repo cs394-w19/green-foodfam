@@ -1,89 +1,138 @@
 import React, { Component } from "react";
 import "./App.css";
-import Loading from './Loading'
-import { Link } from 'react-router-dom'
+import Loading from "./Loading";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 class Result extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      data:null,
-      APIsuccess:false
-    }
+      data: null,
+      APIsuccess: false
+    };
   }
 
   componentWillMount() {
-    // Call our fetch function below once the component mounts
-    this.callBackendAPI()
+    // Example postRequest with data. Replace static with form input
+    this.postRequest("/restaurant/select", {
+      location: "San Francisco, CA"
+    })
       .then(res => {
-        console.log(res.express.selection)
+        const restaurant = res.selection;
         this.setState({
-          data: res.express.selection,
-          APIsuccess:true,
-          name:res.express.selection.name,
-          image_url:res.express.selection.image_url,
-          display_phone:res.express.selection.display_phone,
-          phone:'tel:' + res.express.selection.phone,
-          rating:res.express.selection.rating,
-          url:res.express.selection.url,
-          address1:res.express.selection.location.address1,
-          city:res.express.selection.location.city,
-          state:res.express.selection.location.state,
-          zip_code:res.express.selection.location.zip_code
-        })})
+          data: restaurant,
+          name: restaurant.name,
+          image_url: restaurant.image_url,
+          display_phone: restaurant.display_phone,
+          phone: "tel:" + restaurant.phone,
+          rating: restaurant.rating,
+          url: restaurant.url,
+          address1: restaurant.location.address1,
+          city: restaurant.location.city,
+          state: restaurant.location.state,
+          zip_code: restaurant.location.zip_code,
+          APIsuccess: true
+        });
+      })
       .catch(err => console.log(err));
   }
 
-  // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
-  callBackendAPI = async () => {
-    const response = await fetch("/restaurant/select");
-    const body = await response.json();
+  postRequest = async (route, data = null) => {
+    if (!data) {
+      throw Error("Cannot send post request without data");
+    } else {
+      const res = await axios.post(route, data);
 
-    if (response.status !== 200) {
-      throw Error(body.message);
+      if (res.status !== 200) {
+        throw Error(res.message);
+      }
+
+      return res.data;
     }
-    return body;
+  };
+
+  getRequest = async route => {
+    const res = await axios.get(route);
+    if (res.status !== 200) {
+      throw Error(res.message);
+    }
+    return res.data;
   };
 
   render() {
-    var mapText = this.state.address1 + ' ' + this.state.city + ' ' + this.state.state + ' ' + this.state.zip_code
+    var mapText =
+      this.state.address1 +
+      " " +
+      this.state.city +
+      " " +
+      this.state.state +
+      " " +
+      this.state.zip_code;
     var mapWithSpaces = mapText.replace(/ /g, "+");
-    var mapURL = 'https://www.google.com/maps/place/' + mapWithSpaces
+    var mapURL = "https://www.google.com/maps/place/" + mapWithSpaces;
 
-    const stars = Array.apply(null, { length: this.state.rating }).map((e, i) => (
-                    <img key={i} src='/star.png' className='star' alt='star'/>
-                  ));
+    const stars = Array.apply(null, { length: this.state.rating }).map(
+      (e, i) => <img key={i} src="/star.png" className="star" alt="star" />
+    );
 
-    if(this.state.APIsuccess){
+    if (this.state.APIsuccess) {
       return (
         <div className="App">
-          <div className='appRecommend'>We Recommend:</div>
-          <img src={this.state.image_url} className='restaurantPic' alt='yelp-pic'/>
-          <div className='restName'>{this.state.name}</div>
+          <div className="appRecommend">We Recommend:</div>
+          <img
+            src={this.state.image_url}
+            className="restaurantPic"
+            alt="yelp-pic"
+          />
+          <div className="restName">{this.state.name}</div>
           <div>{this.state.address1}</div>
-          <div>{this.state.city}, {this.state.state} {this.state.zip_code}</div>
+          <div>
+            {this.state.city}, {this.state.state} {this.state.zip_code}
+          </div>
           <div>{stars}</div>
-          <div className='buttonContainer'>
-            <Link to='/'>
-              <button className="containedButton" style={{backgroundColor:'rgba(234, 72, 72, .8)'}}>
-                <img className='containedButtonImg' src='/back.png' alt=''/>
+          <div className="buttonContainer">
+            <Link to="/">
+              <button
+                className="containedButton"
+                style={{ backgroundColor: "rgba(234, 72, 72, .8)" }}
+              >
+                <img className="containedButtonImg" src="/back.png" alt="" />
               </button>
             </Link>
-            <a href={mapURL} target='_blank' rel="noopener noreferrer"><button className='containedButton' style={{backgroundColor:'rgba(66, 134, 244, .8)'}}>
-              <img className='containedButtonImg' src='/directions.png' alt=''/>
-            </button></a>
-            <a href={this.state.phone}><button className="containedButton" style={{backgroundColor:'rgba(64, 229, 119, .8)'}}>
-              <img className='containedButtonImg' src='/phone.png' alt=''/>
-            </button></a>
-          <a href={this.state.url} target='_blank' rel="noopener noreferrer"><button className="containedButton" style={{backgroundColor:'#fc8888'}}>
-              <img className='containedButtonImg' src='/web.png' alt=''/>
-            </button></a>
+            <a href={mapURL} target="_blank" rel="noopener noreferrer">
+              <button
+                className="containedButton"
+                style={{ backgroundColor: "rgba(66, 134, 244, .8)" }}
+              >
+                <img
+                  className="containedButtonImg"
+                  src="/directions.png"
+                  alt=""
+                />
+              </button>
+            </a>
+            <a href={this.state.phone}>
+              <button
+                className="containedButton"
+                style={{ backgroundColor: "rgba(64, 229, 119, .8)" }}
+              >
+                <img className="containedButtonImg" src="/phone.png" alt="" />
+              </button>
+            </a>
+            <a href={this.state.url} target="_blank" rel="noopener noreferrer">
+              <button
+                className="containedButton"
+                style={{ backgroundColor: "#fc8888" }}
+              >
+                <img className="containedButtonImg" src="/web.png" alt="" />
+              </button>
+            </a>
           </div>
         </div>
       );
-    }
-    else{
-      return(<Loading/>)
+    } else {
+      return <Loading />;
     }
   }
 }
