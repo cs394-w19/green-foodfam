@@ -23,7 +23,7 @@ app.get("/restaurant/info", (req, res) => {
     })
     .then(response => {
       const joints = response.jsonBody.businesses;
-      res.send({ choice: joints[0] });
+      res.send({ express: joints[0] });
     })
     .catch(e => {
       res.status(400).send(e);
