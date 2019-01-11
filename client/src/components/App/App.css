@@ -23,7 +23,7 @@ a{
 .appRecommend{
   font-size: 28pt;
   font-weight: 900;
-  padding: 30% 10px 10px 10px;
+  padding: 20px 10px 20px 10px;
 }
 
 .categorySelector{
@@ -46,6 +46,12 @@ a{
   border: 0;
   font-size: 16pt;
   margin-top: 10px;
+}
+
+.restaurantPic{
+  width: 80%;
+  object-fit: cover;
+  box-shadow: 1px 1px 50px -5px #444;
 }
 
 .goButton{
@@ -134,4 +140,85 @@ a{
     -webkit-transform: scale3D(0, 0, 1);
             transform: scale3D(0, 0, 1);
   }
+}
+
+.star{
+  height: 20px;
+  margin: 20px 5px 50px 5px;
+}
+
+.restName{
+  color:white;
+  font-size: 24pt;
+  font-weight: 900;
+  margin-top: 20px;
+}
+
+.button1{
+  background: #fff;
+  background-size: cover;
+  border-radius: 20px;
+  padding: 15px 50px;
+  background: #ff9a9e;
+  border: 4px solid #fff;
+  font-size: 12pt;
+  font-family: Roboto;
+  font-weight: 300;
+  width: 290px;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 2px;
+  position: absolute;
+  text-align: center;
+  bottom: 20px;
+  right:10px;
+  z-index:9999444499;
+}
+
+.buttonContainer{
+  width:100%;
+  height:70px;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.restCardButtonContainer{
+  width:100%;
+  height:60px;
+  text-align: center;
+  padding-top: 30px;
+}
+
+.containedButton{
+  height: 60px;
+  width: 60px;
+  margin: 0px 10px;
+  border-radius: 50%;
+  border: 0px;
+  box-shadow: 1px 1px 20px -5px #555;
+}
+
+.containedButtonImg{
+  height: 30px;
+  margin: 2px;
+}
+
+.button2{
+  background: #fff;
+  background-size: cover;
+  border-radius: 20px;
+  padding: 15px 50px;
+  background: #ff9a9e;
+  border: 4px solid #fff;
+  font-size: 12pt;
+  font-family: Roboto;
+  font-weight: 300;
+  width: 290px;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 2px;
+  position: absolute;
+  text-align: center;
+  bottom: 20px;
+  right: 10px;
 }
