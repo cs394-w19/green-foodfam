@@ -44,16 +44,16 @@ app.post("/restaurant/select", async (req, res) => {
   }
 });
 
-// // Creates and stores a new room entry on firebase database. returns room_code
-// // to front-end to share with other users
-// app.get("/create/room", async (req, res) => {
-//   try {
-//     await roomsRef.push({
-//       name: "A test from backend",
-//       room_code: 1231241
-//     });
-//     res.send("everything good! Will send real room_code in the future");
-//   } catch (e) {
-//     res.status(400).send(e);
-//   }
-// });
+// Creates and stores a new room entry on firebase database. returns room_code
+// to front-end to share with other users
+app.get("/create/room", async (req, res) => {
+  try {
+    await roomsRef.push({
+      name: "A test from backend",
+      room_code: 1231241
+    });
+    res.send("everything good! Will send real room_code in the future");
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
