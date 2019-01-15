@@ -5,8 +5,16 @@ import { Link } from "react-router-dom";
 class App extends Component {
   state = {
     data: null,
-    location: "Evanston, IL"
+    location: "Evanston, IL",
+    code:null
   };
+
+  componentWillMount(){
+    const val = Math.floor(1000 + Math.random() * 9000);
+    this.setState({
+      code:val
+    })
+  }
 
   updateLocation = e => {
     this.setState({
@@ -15,15 +23,13 @@ class App extends Component {
   };
 
   generateRoomCode() {
-    let val = Math.floor(1000 + Math.random() * 9000);
-    return val;
   }
 
   render() {
     return (
       <div className="App">
         <div className="appCode">
-          GROUP CODE: <i>{this.generateRoomCode()}</i>
+          GROUP CODE: <i>{this.state.code}</i>
         </div>
         <div className="appRecommend">What's your location?</div>
         <input
