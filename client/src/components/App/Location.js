@@ -14,10 +14,17 @@ class App extends Component {
     });
   };
 
+  generateRoomCode() {
+    let val = Math.floor(1000 + Math.random() * 9000);
+    return val;
+  }
+
   render() {
     return (
       <div className="App">
-        <div className="appCode">GROUP CODE: <i>8785</i></div>
+        <div className="appCode">
+          GROUP CODE: <i>{this.generateRoomCode()}</i>
+        </div>
         <div className="appRecommend">What's your location?</div>
         <input
           className="locationInput"
