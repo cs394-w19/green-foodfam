@@ -26,6 +26,13 @@ a{
   padding: 20px 10px 20px 10px;
 }
 
+.appCode{
+  font-size: 28pt;
+  font-weight: 900;
+  padding: 20px 10px 20px 10px;
+  color: #32d374;
+  background-color: white;
+}
 .categorySelector{
   background-color: white;
   font-size: 14pt;

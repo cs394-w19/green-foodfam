@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import { Link } from "react-router-dom";
 
-class App extends Component {
+class Code extends Component {
   state = {
     data: null,
     location: ""
@@ -17,19 +17,17 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <img src="/logo.png" className="App-logo" alt="logo" />
-        <div className="appHeader">FoodFam.</div>
+        <div className="appQuestion">Enter your group code:</div>
         <input
           className="locationInput"
-          type="text"
-          placeholder="Evanston, Illinois"
-          onChange={e => this.updateLocation(e)}
+          type="tel"
+          placeholder="****"
         />
         <br />
         <Link
           to={{
             pathname: "/price",
-            state: { loc: `${this.state.location}` }
+            state: { loc: `Evanston, IL` }
           }}
         >
           <button className="goButton">GO</button>
@@ -39,4 +37,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Code;

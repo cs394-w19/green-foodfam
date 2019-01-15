@@ -17,7 +17,7 @@ class Loading extends Component {
           <div className="sk-cube sk-cube8"></div>
           <div className="sk-cube sk-cube9"></div>
         </div>
-        <div className='contentMainHeader'>loading...</div>
+        <div className='contentMainHeader'>waiting for group members...</div>
       </div>
     );
   }
