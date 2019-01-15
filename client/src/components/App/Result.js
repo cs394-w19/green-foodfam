@@ -78,7 +78,7 @@ class Result extends Component {
     if (this.state.APIsuccess) {
       return (
         <div className="App">
-          <div className="appRecommend">We Recommend:</div>
+          <div className="appRecommend">Your Group's Recommendation:</div>
           <img
             src={this.state.image_url}
             className="restaurantPic"

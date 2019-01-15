@@ -59,6 +59,7 @@ a{
   width: 80%;
   object-fit: cover;
   box-shadow: 1px 1px 50px -5px #444;
+  max-height: 200px;
 }
 
 .goButton{
