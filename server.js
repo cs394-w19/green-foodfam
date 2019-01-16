@@ -2,22 +2,22 @@ const express = require("express");
 const yelp = require("./node_modules/yelp-fusion");
 const bodyParser = require("body-parser");
 
-// // initialize fire base dependencies & secret
-// var firebase = require("firebase-admin");
-// var serviceAccount = require("./serviceAccountKey.json");
+// initialize fire base dependencies & secret
+var firebase = require("firebase-admin");
+var serviceAccount = require("./serviceAccountKey.json");
 
 const client = yelp.client(
   "rskD-cUIB4NnhGMykAblkUcoYVMfah1tKpbYY7jTYN6beAkHppENDnT7es0Qw-FL0mMILOJnTNTomhre1LFcJi91sO8H10hI0tx8_wpBa92jfVCFTcsgKuv0Nhw2XHYx"
 );
 
-// // firebase initialization
-// firebase.initializeApp({
-//   credential: firebase.credential.cert(serviceAccount),
-//   databaseURL: "https://foodfam-caf4c.firebaseio.com"
-// });
-// var db = firebase.database();
-// var ref = db.ref("restricted_access/secret_document");
-// var roomsRef = ref.child("users");
+// firebase initialization
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: "https://foodfam-caf4c.firebaseio.com"
+});
+var db = firebase.database();
+var ref = db.ref("restricted_access/secret_document");
+var roomsRef = ref.child("rooms");
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -46,14 +46,18 @@ app.post("/restaurant/select", async (req, res) => {
 
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
-app.get("/create/room", async (req, res) => {
+app.get("/create/room", (req, res) => {
   try {
-    await roomsRef.push({
-      name: "A test from backend",
-      room_code: 1231241
-    });
-    res.send("everything good! Will send real room_code in the future");
+    const code = Math.floor(1000 + Math.random() * 9000);
+
+    res.send({ code });
+
+    // await roomsRef.push({
+    //   name: "A test from backend",
+    //   room_code: 1231241
+    // });
+    // res.send("everything good! Will send real room_code in the future");
   } catch (e) {
-    res.status(400).send(e);
+    res.sendStatus(400).send(e);
   }
 });

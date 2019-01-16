@@ -6,14 +6,14 @@ class App extends Component {
   state = {
     data: null,
     location: "Evanston, IL",
-    code:null
+    code: null
   };
 
-  componentWillMount(){
+  componentWillMount() {
     const val = Math.floor(1000 + Math.random() * 9000);
     this.setState({
-      code:val
-    })
+      code: val
+    });
   }
 
   updateLocation = e => {
@@ -21,9 +21,6 @@ class App extends Component {
       location: e.target.value
     });
   };
-
-  generateRoomCode() {
-  }
 
   render() {
     return (
