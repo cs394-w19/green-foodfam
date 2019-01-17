@@ -18,6 +18,12 @@ firebase.initializeApp({
 var db = firebase.database();
 var ref = db.ref("restricted_access/secret_document");
 var roomsRef = ref.child("rooms");
+var usersRef = ref.child("users");
+//test the usage of database
+usersRef.child("testUser").set({
+  name: "Alan Turing",
+  room_code: "1234"
+});
 
 const port = process.env.PORT || 5000;
 const app = express();
