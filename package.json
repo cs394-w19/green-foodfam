@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/cs394-w19/green-foodfam/issues"
   },
-  "homepage": "https://github.com/cs394-w19/green-foodfam#readme",
+  "homepage": "https://github.com/cs394-w19/green-foodfam",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
