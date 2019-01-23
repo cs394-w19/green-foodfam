@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 // initialize fire base dependencies & secret
 var firebase = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
+var roomNames = ["bake", "toll", "mars", "heir", "camp", "roof", "wife", "huge", "case", "tray"];
 
 const client = yelp.client(
   "rskD-cUIB4NnhGMykAblkUcoYVMfah1tKpbYY7jTYN6beAkHppENDnT7es0Qw-FL0mMILOJnTNTomhre1LFcJi91sO8H10hI0tx8_wpBa92jfVCFTcsgKuv0Nhw2XHYx"
@@ -16,15 +17,7 @@ firebase.initializeApp({
   databaseURL: "https://foodfam-caf4c.firebaseio.com"
 });
 var db = firebase.database();
-var ref = db.ref("restricted_access/secret_document");
-var roomsRef = ref.child("rooms");
-var usersRef = ref.child("users");
-//test the usage of database
-usersRef.child("testUser").set({
-  name: "Alan Turing",
-  room_code: "1234"
-});
-
+var ref = db.ref("/data");
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -52,18 +45,67 @@ app.post("/restaurant/select", async (req, res) => {
 
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
-app.get("/create/room", (req, res) => {
+app.get("/create/room", async (req, res) => {
   try {
-    const code = Math.floor(1000 + Math.random() * 9000);
-
+    // const code = Math.floor(1000 + Math.random() * 9000);
+    const code = roomNames[Math.floor(Math.random() * roomNames.length)];
     res.send({ code });
+    let postData = {
+      category: {
+        American: 0,
+        Mexican: 0,
+        Thai: 0
+      },
+      totalPrice: 0,
+      users: {
+      }
+    };
+    var ref = db.ref("/data");
+    var updates = {};
+    updates['/' + code] = postData;
+    await ref.update(updates);
 
-    // await roomsRef.push({
-    //   name: "A test from backend",
-    //   room_code: 1231241
-    // });
-    // res.send("everything good! Will send real room_code in the future");
   } catch (e) {
-    res.sendStatus(400).send(e);
+    return res.sendStatus(400).send(e);
+  }
+});
+
+app.get("/create/user", async(req, res) => {
+  try {
+    const userName = req.body.userName;
+    const roomName = req.body.roomName;
+    var updates = {};
+    updates['/' + roomName + "/users/" + userName] = 0;
+    await ref.update(updates);
+
+  } catch (e) {
+    return res.sendStatus(400).send(e);
+  }
+});
+
+app.get("/update/preference", async(req, res) => {
+  try {
+    //const userName = req.body.userName;
+    const roomName = req.body.roomName;
+    const priceRange = req.body.priceRange;
+    //const category = req.body.category;
+    var updates = {};
+    var prevPriceTotal = 0;
+    var priceRef = db.ref("/data/" + roomName + "/totalPrice");
+    var roomRef = ref.child("heir");
+    
+    //get previous priceTotal
+    await priceRef.on("value", function(snapshot) {
+      prevPriceTotal = snapshot.val();
+      console.log(prevPriceTotal);
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+
+    updates["/totalPrice"] = 5;
+
+    roomRef.update(updates);
+  } catch (e) {
+      //return res.sendStatus(400).send(e);
   }
 });
