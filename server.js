@@ -70,42 +70,53 @@ app.get("/create/room", async (req, res) => {
   }
 });
 
-app.get("/create/user", async(req, res) => {
+app.post("/create/user", (req, res) => {
   try {
     const userName = req.body.userName;
     const roomName = req.body.roomName;
     var updates = {};
+    var ref = db.ref("/data");
     updates['/' + roomName + "/users/" + userName] = 0;
-    await ref.update(updates);
+    ref.update(updates);
 
   } catch (e) {
     return res.sendStatus(400).send(e);
   }
 });
 
-app.get("/update/preference", async(req, res) => {
+app.post("/update/preference", (req, res) => {
   try {
-    //const userName = req.body.userName;
+    const userName = req.body.userName;
     const roomName = req.body.roomName;
     const priceRange = req.body.priceRange;
-    //const category = req.body.category;
+    const category = req.body.category;
     var updates = {};
     var prevPriceTotal = 0;
+    var prevCategory = 0;
     var priceRef = db.ref("/data/" + roomName + "/totalPrice");
+    var categoryRef = db.ref("/data/" + roomName + "/category/" + category);
     var roomRef = ref.child("heir");
     
     //get previous priceTotal
-    await priceRef.on("value", function(snapshot) {
+    priceRef.on("value", function(snapshot) {
       prevPriceTotal = snapshot.val();
       console.log(prevPriceTotal);
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
     });
 
-    updates["/totalPrice"] = 5;
+    categoryRef.on("value", function(snapshot) {
+      prevCategory = snapshot.val();
+      console.log(prevCategory);
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
 
+    updates["/totalPrice"] = Number(priceRange) + Number(prevPriceTotal);
+    updates["/users/" + userName] = 1;
+    updates["/category/" + category] = Number(prevCategory) + 1;
     roomRef.update(updates);
   } catch (e) {
-      //return res.sendStatus(400).send(e);
+      return res.sendStatus(400).send(e);
   }
 });
