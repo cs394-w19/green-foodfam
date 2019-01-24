@@ -138,18 +138,30 @@ app.post("/result", async (req, res) => {
       var users = new Map(Object.entries(room.users));
       var totalPrice = room.totalPrice;
       var resCategory = "";
-      resPrice = totalPrice / users.size;
-
-      var high = 0;
-      category.forEach((value, key, map) => {
-        if (value > high){
-          high = value;
-          resCategory = key;
+      resPrice = Math.round(totalPrice / users.size);
+      //see if all user have finished
+      var ifSend = false;
+      var isFinished = true;
+      users.forEach((value, key, map) => {
+        if (value == 0){
+          isFinished = false;
         }
       });
-      console.log(resPrice + "  " + resCategory);
-      res.send({ resPrice, resCategory });
-
+      //return result if all users have finished
+      if(isFinished){
+        var high = 0;
+        category.forEach((value, key, map) => {
+          if (value > high){
+            high = value;
+            resCategory = key;
+          }
+          ifSend = true;
+        });
+        console.log(resPrice + "  " + resCategory);
+      }
+      if(ifSend){
+        res.send({ resPrice, resCategory });
+      }
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
     });
