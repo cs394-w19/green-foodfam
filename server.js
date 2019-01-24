@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 // initialize fire base dependencies & secret
 var firebase = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
-var roomNames = ["bake", "toll", "mars", "heir", "camp", "roof", "wife", "huge", "case", "tray"];
+var roomNames = ["bake", "toll", "mars", "heir", "camp", "roof", "surf", "huge", "case", "tray"];
 
 const client = yelp.client(
   "rskD-cUIB4NnhGMykAblkUcoYVMfah1tKpbYY7jTYN6beAkHppENDnT7es0Qw-FL0mMILOJnTNTomhre1LFcJi91sO8H10hI0tx8_wpBa92jfVCFTcsgKuv0Nhw2XHYx"
@@ -62,7 +62,7 @@ app.get("/create/room", async (req, res) => {
     };
     var ref = db.ref("/data");
     var updates = {};
-    updates['/' + "bake"] = postData;
+    updates['/' + code] = postData;
     await ref.update(updates);
 
   } catch (e) {
