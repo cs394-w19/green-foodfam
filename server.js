@@ -84,6 +84,33 @@ app.post("/create/user", (req, res) => {
   }
 });
 
+app.post("/display/unfinished", async (req, res) => {
+  try{
+    const roomName = req.body.roomName;
+    var roomRef = ref.child(roomName);
+    roomRef.on("value", function(snapshot) {
+      returnList = [];
+      roomJSON = snapshot.val();
+      //console.log(roomJSON);
+
+      var room = JSON.parse(JSON.stringify(roomJSON));
+      var users = new Map(Object.entries(room.users));
+      
+      users.forEach((value, key, map) => {
+        if (value == 0){
+          returnList.push(key);
+        }
+      });
+      console.log(returnList);
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+    return res.send({ returnList });
+  } catch (e) {
+      //return res.sendStatus(400).send(e);
+  }
+});
+
 app.post("/update/preference", async (req, res) => {
   try {
     const userName = req.body.userName;
@@ -95,7 +122,7 @@ app.post("/update/preference", async (req, res) => {
     var prevCategory = 0;
     var priceRef = db.ref("/data/" + roomName + "/totalPrice");
     var categoryRef = db.ref("/data/" + roomName + "/category/" + category);
-    var roomRef = ref.child("heir");
+    var roomRef = ref.child(roomName);
     var returnList = [];
     //get previous priceTotal
     priceRef.on("value", function(snapshot) {
