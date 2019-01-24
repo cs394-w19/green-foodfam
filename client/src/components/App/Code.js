@@ -31,6 +31,13 @@ class Code extends Component {
           }}
         >
           <button className="goButton">GO</button>
+        </Link> <br/>
+        <Link to="/">
+          <button
+            className="backButton"
+            style={{ backgroundColor: "rgba(234, 72, 72, .8)" }}>
+            <img className="containedButtonImg" src="/back.png" alt="" />
+          </button> 
         </Link>
       </div>
     );

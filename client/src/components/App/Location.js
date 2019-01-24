@@ -39,7 +39,8 @@ class App extends Component {
         <Link
           to={{
             pathname: "/price",
-            state: { loc: `${this.state.location}` }
+            state: { loc: `${this.state.location}`,
+                     code: `${this.state.code}` }
           }}
         >
           <button className="goButton">GO</button>

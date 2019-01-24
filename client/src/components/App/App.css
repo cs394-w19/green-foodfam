@@ -75,6 +75,19 @@ a {
   box-shadow: 1px 1px 30px -3px #666;
 }
 
+.backButton {
+  width: 40%;
+  padding: 10px 20px;
+  border-radius: 40px;
+  background-color: #d64a4a;
+  color: white;
+  font-size: 16pt;
+  font-weight: 600;
+  margin-top: 40px;
+  border: 0;
+  box-shadow: 1px 1px 30px -3px #666;
+}
+
 .App-link {
   color: #61dafb;
 }
