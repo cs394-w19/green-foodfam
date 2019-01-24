@@ -5,7 +5,18 @@ const bodyParser = require("body-parser");
 // initialize fire base dependencies & secret
 var firebase = require("firebase-admin");
 var serviceAccount = require("./serviceAccountKey.json");
-var roomNames = ["bake", "toll", "mars", "heir", "camp", "roof", "surf", "huge", "case", "tray"];
+var roomNames = [
+  "bake",
+  "toll",
+  "mars",
+  "heir",
+  "camp",
+  "roof",
+  "surf",
+  "huge",
+  "case",
+  "tray"
+];
 
 const client = yelp.client(
   "rskD-cUIB4NnhGMykAblkUcoYVMfah1tKpbYY7jTYN6beAkHppENDnT7es0Qw-FL0mMILOJnTNTomhre1LFcJi91sO8H10hI0tx8_wpBa92jfVCFTcsgKuv0Nhw2XHYx"
@@ -43,6 +54,22 @@ app.post("/restaurant/select", async (req, res) => {
   }
 });
 
+yelpRequest = async (location, price, categories) => {
+  try {
+    const response = await client.search({
+      term: "restaurant",
+      location,
+      price,
+      categories,
+      open_now: true
+    });
+    const restaurant = response.jsonBody.businesses[0];
+    return restaurant;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
 app.get("/create/room", async (req, res) => {
@@ -57,14 +84,12 @@ app.get("/create/room", async (req, res) => {
         Thai: 0
       },
       totalPrice: 0,
-      users: {
-      }
+      users: {}
     };
     var ref = db.ref("/data");
     var updates = {};
-    updates['/' + code] = postData;
+    updates["/" + code] = postData;
     await ref.update(updates);
-
   } catch (e) {
     return res.sendStatus(400).send(e);
   }
@@ -76,38 +101,41 @@ app.post("/create/user", (req, res) => {
     const roomName = req.body.roomName;
     var updates = {};
     var ref = db.ref("/data");
-    updates['/' + roomName + "/users/" + userName] = 0;
+    updates["/" + roomName + "/users/" + userName] = 0;
     ref.update(updates);
-
   } catch (e) {
     return res.sendStatus(400).send(e);
   }
 });
 
 app.post("/display/unfinished", async (req, res) => {
-  try{
+  try {
     const roomName = req.body.roomName;
     var roomRef = ref.child(roomName);
-    roomRef.on("value", function(snapshot) {
-      returnList = [];
-      roomJSON = snapshot.val();
-      //console.log(roomJSON);
+    roomRef.on(
+      "value",
+      function(snapshot) {
+        returnList = [];
+        roomJSON = snapshot.val();
+        //console.log(roomJSON);
 
-      var room = JSON.parse(JSON.stringify(roomJSON));
-      var users = new Map(Object.entries(room.users));
-      
-      users.forEach((value, key, map) => {
-        if (value == 0){
-          returnList.push(key);
-        }
-      });
-      console.log(returnList);
-    }, function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
+        var room = JSON.parse(JSON.stringify(roomJSON));
+        var users = new Map(Object.entries(room.users));
+
+        users.forEach((value, key, map) => {
+          if (value == 0) {
+            returnList.push(key);
+          }
+        });
+        console.log(returnList);
+      },
+      function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      }
+    );
     return res.send({ returnList });
   } catch (e) {
-      //return res.sendStatus(400).send(e);
+    //return res.sendStatus(400).send(e);
   }
 });
 
@@ -125,44 +153,56 @@ app.post("/update/preference", async (req, res) => {
     var roomRef = ref.child(roomName);
     var returnList = [];
     //get previous priceTotal
-    priceRef.on("value", function(snapshot) {
-      prevPriceTotal = snapshot.val();
-    }, function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
+    priceRef.on(
+      "value",
+      function(snapshot) {
+        prevPriceTotal = snapshot.val();
+      },
+      function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      }
+    );
 
-    categoryRef.on("value", function(snapshot) {
-      prevCategory = snapshot.val();
-    }, function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
+    categoryRef.on(
+      "value",
+      function(snapshot) {
+        prevCategory = snapshot.val();
+      },
+      function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      }
+    );
 
     updates["/totalPrice"] = Number(priceRange) + Number(prevPriceTotal);
     updates["/users/" + userName] = 1;
     updates["/category/" + category] = Number(prevCategory) + 1;
     roomRef.update(updates);
 
-    roomRef.on("value", function(snapshot) {
-      returnList = [];
-      roomJSON = snapshot.val();
-      console.log(roomJSON);
+    roomRef.on(
+      "value",
+      function(snapshot) {
+        returnList = [];
+        roomJSON = snapshot.val();
+        console.log(roomJSON);
 
-      var room = JSON.parse(JSON.stringify(roomJSON));
-      var users = new Map(Object.entries(room.users));
-      
-      users.forEach((value, key, map) => {
-        if (value == 0){
-          returnList.push(key);
-        }
-      });
-      console.log(returnList);
-    }, function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
+        var room = JSON.parse(JSON.stringify(roomJSON));
+        var users = new Map(Object.entries(room.users));
+
+        users.forEach((value, key, map) => {
+          if (value == 0) {
+            returnList.push(key);
+          }
+        });
+        console.log(returnList);
+      },
+      function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      }
+    );
     return res.send({ returnList });
     //return users who have value 0 (not finished)
   } catch (e) {
-      return res.sendStatus(400).send(e);
+    return res.sendStatus(400).send(e);
   }
 });
 
@@ -172,42 +212,45 @@ app.post("/result", async (req, res) => {
     var roomRef = db.ref("/data/" + roomName);
     var roomJSON = {};
     var unfinished = [];
-    await roomRef.on("value", function(snapshot) {
+    await roomRef.on(
+      "value",
+      function(snapshot) {
+        roomJSON = snapshot.val();
 
-      roomJSON = snapshot.val();
-
-      var room = JSON.parse(JSON.stringify(roomJSON));
-      var category = new Map(Object.entries(room.category));
-      var users = new Map(Object.entries(room.users));
-      var totalPrice = room.totalPrice;
-      var resCategory = "";
-      resPrice = Math.round(totalPrice / users.size);
-      //see if all user have finished
-      var ifSend = false;
-      var isFinished = true;
-      users.forEach((value, key, map) => {
-        if (value == 0){
-          isFinished = false;
-        }
-      });
-      //return result if all users have finished
-      if(isFinished){
-        var high = 0;
-        category.forEach((value, key, map) => {
-          if (value > high){
-            high = value;
-            resCategory = key;
+        var room = JSON.parse(JSON.stringify(roomJSON));
+        var category = new Map(Object.entries(room.category));
+        var users = new Map(Object.entries(room.users));
+        var totalPrice = room.totalPrice;
+        var resCategory = "";
+        resPrice = Math.round(totalPrice / users.size);
+        //see if all user have finished
+        var ifSend = false;
+        var isFinished = true;
+        users.forEach((value, key, map) => {
+          if (value == 0) {
+            isFinished = false;
           }
-          ifSend = true;
         });
-        console.log(resPrice + "  " + resCategory);
+        //return result if all users have finished
+        if (isFinished) {
+          var high = 0;
+          category.forEach((value, key, map) => {
+            if (value > high) {
+              high = value;
+              resCategory = key;
+            }
+            ifSend = true;
+          });
+          console.log(resPrice + "  " + resCategory);
+        }
+        if (ifSend) {
+          res.send({ resPrice, resCategory });
+        }
+      },
+      function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
       }
-      if(ifSend){
-        res.send({ resPrice, resCategory });
-      }
-    }, function (errorObject) {
-      console.log("The read failed: " + errorObject.code);
-    });
+    );
   } catch (e) {
     console.log(e);
     //return res.sendStatus(400).send(e);
