@@ -115,7 +115,46 @@ app.post("/update/preference", (req, res) => {
     updates["/users/" + userName] = 1;
     updates["/category/" + category] = Number(prevCategory) + 1;
     roomRef.update(updates);
+
+    //return users who have value 0 (not finished)
   } catch (e) {
       return res.sendStatus(400).send(e);
+  }
+});
+
+app.post("/result", async (req, res) => {
+  try {
+    const roomName = req.body.roomName;
+    var roomRef = db.ref("/data/" + roomName);
+    var roomJSON = {};
+    var unfinished = [];
+    await roomRef.on("value", function(snapshot) {
+
+      roomJSON = snapshot.val();
+      console.log(roomJSON);
+
+      var room = JSON.parse(JSON.stringify(roomJSON));
+      var category = new Map(Object.entries(room.category));
+      var users = new Map(Object.entries(room.users));
+      var totalPrice = room.totalPrice;
+      var resCategory = "";
+      resPrice = totalPrice / users.size;
+
+      var high = 0;
+      category.forEach((value, key, map) => {
+        if (value > high){
+          high = value;
+          resCategory = key;
+        }
+      });
+      console.log(resPrice + "  " + resCategory);
+      res.send({ resPrice, resCategory });
+
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+  } catch (e) {
+    console.log(e);
+    //return res.sendStatus(400).send(e);
   }
 });
