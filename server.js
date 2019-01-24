@@ -149,7 +149,7 @@ app.post("/update/preference", async (req, res) => {
 
       var room = JSON.parse(JSON.stringify(roomJSON));
       var users = new Map(Object.entries(room.users));
-      
+
       users.forEach((value, key, map) => {
         if (value == 0){
           returnList.push(key);
