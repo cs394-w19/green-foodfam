@@ -96,7 +96,6 @@ app.post("/update/preference", (req, res) => {
     var priceRef = db.ref("/data/" + roomName + "/totalPrice");
     var categoryRef = db.ref("/data/" + roomName + "/category/" + category);
     var roomRef = ref.child("heir");
-    
     //get previous priceTotal
     priceRef.on("value", function(snapshot) {
       prevPriceTotal = snapshot.val();
