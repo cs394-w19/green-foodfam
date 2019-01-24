@@ -62,7 +62,7 @@ app.get("/create/room", async (req, res) => {
     };
     var ref = db.ref("/data");
     var updates = {};
-    updates['/' + code] = postData;
+    updates['/' + "bake"] = postData;
     await ref.update(updates);
 
   } catch (e) {
@@ -84,7 +84,7 @@ app.post("/create/user", (req, res) => {
   }
 });
 
-app.post("/update/preference", (req, res) => {
+app.post("/update/preference", async (req, res) => {
   try {
     const userName = req.body.userName;
     const roomName = req.body.roomName;
@@ -96,17 +96,16 @@ app.post("/update/preference", (req, res) => {
     var priceRef = db.ref("/data/" + roomName + "/totalPrice");
     var categoryRef = db.ref("/data/" + roomName + "/category/" + category);
     var roomRef = ref.child("heir");
+    var returnList = [];
     //get previous priceTotal
     priceRef.on("value", function(snapshot) {
       prevPriceTotal = snapshot.val();
-      console.log(prevPriceTotal);
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
     });
 
     categoryRef.on("value", function(snapshot) {
       prevCategory = snapshot.val();
-      console.log(prevCategory);
     }, function (errorObject) {
       console.log("The read failed: " + errorObject.code);
     });
@@ -116,6 +115,24 @@ app.post("/update/preference", (req, res) => {
     updates["/category/" + category] = Number(prevCategory) + 1;
     roomRef.update(updates);
 
+    roomRef.on("value", function(snapshot) {
+      returnList = [];
+      roomJSON = snapshot.val();
+      console.log(roomJSON);
+
+      var room = JSON.parse(JSON.stringify(roomJSON));
+      var users = new Map(Object.entries(room.users));
+      
+      users.forEach((value, key, map) => {
+        if (value == 0){
+          returnList.push(key);
+        }
+      });
+      console.log(returnList);
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
+    return res.send({ returnList });
     //return users who have value 0 (not finished)
   } catch (e) {
       return res.sendStatus(400).send(e);
@@ -131,7 +148,6 @@ app.post("/result", async (req, res) => {
     await roomRef.on("value", function(snapshot) {
 
       roomJSON = snapshot.val();
-      console.log(roomJSON);
 
       var room = JSON.parse(JSON.stringify(roomJSON));
       var category = new Map(Object.entries(room.category));
