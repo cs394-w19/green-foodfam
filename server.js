@@ -69,9 +69,6 @@ yelpRequest = async (location, price, categories) => {
     console.log(err);
   }
 };
-
-
-
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
 app.post("/create/room", async (req, res) => {
@@ -263,7 +260,9 @@ app.post("/result", async (req, res) => {
 
         }
         if (ifSend) {
-          res.send({ result });
+          res.send({ result, done:true });
+        }else{
+          res.send({done: false});
         }
       },
       function(errorObject) {
