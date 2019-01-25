@@ -7,20 +7,16 @@ class Price extends Component {
     data: null,
   };
 
+  onComplete(category){
+    this.props.updateData('category',category)
+    this.props.updateCurrent('Result')
+  }
+
   render() {
     const yelpList = ["Mexican", "Thai", "American"];
     const categories = yelpList.map((category, i) => {
       return (
-        <Link
-          key={i}
-          to={{
-            pathname: "/result",
-            state: { loc: this.props.location.state.loc }
-          }}
-          style={{ textAlign: "center" }}
-        >
-          <div className="goButton">{category}</div>
-        </Link>
+        <div onClick={()=>this.onComplete(category)} className="goButton">{category}</div>
       );
     });
     return (

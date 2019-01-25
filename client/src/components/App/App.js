@@ -12,8 +12,10 @@ import axios from "axios"
 class App extends Component {
   state = {
     data: null,
-    location: "",
-    code:"",
+    location: null,
+    code:null,
+    price:null,
+    category:null,
     current:'Home'
   };
 
@@ -81,7 +83,7 @@ class App extends Component {
     if (this.state.current === 'Code'){return(<Code updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
-    if (this.state.current === 'Price'){return(<Price updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
+    if (this.state.current === 'Price'){return(<Price code={this.state.code} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Result'){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
   }
 }
