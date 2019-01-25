@@ -7,6 +7,7 @@ import Location from './Location'
 import Price from './Price'
 import Result from './Result'
 import Home from './Home'
+import Loading from './Loading'
 import axios from "axios"
 
 class App extends Component {
@@ -18,7 +19,9 @@ class App extends Component {
     current:'Home',
     isOwner:null,
     name:'hello',
-    roomname:null
+    roomname:null,
+    restData:null,
+    APISuccess:false
   };
 
   updateLocation = e => {
@@ -112,6 +115,10 @@ class App extends Component {
         }
         else{
           console.log(res.result)
+          this.setState({
+            restData: res.result,
+            APISuccess:true
+          })
         }
       })
       .catch((err)=>console.log(err))
@@ -140,7 +147,8 @@ class App extends Component {
     if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} updatePreference={()=>this.updatePreference()}/>)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
     if (this.state.current === 'Price'){return(<Price roomname={this.state.roomname} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
-    if (this.state.current === 'Result'){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
+    if (this.state.current === 'Result' && this.state.APISuccess){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} restData={this.state.restData}/>)}
+    return(<Loading/>)
   }
 }
 
