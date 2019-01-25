@@ -39,21 +39,6 @@ app.use(bodyParser.json());
 // console.log that your server is up and running
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-// POST route which returns a restaurant
-// It takes in the location data and makes an API request to Yelp before returning to front-end
-app.post("/restaurant/select", async (req, res) => {
-  try {
-    const location = req.body.location;
-    const response = await client.search({
-      term: "restaurant",
-      location: location
-    });
-    res.send({ selection: response.jsonBody.businesses[0] });
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
-
 yelpRequest = async (location, price, categories) => {
   try {
     const response = await client.search({
@@ -64,11 +49,13 @@ yelpRequest = async (location, price, categories) => {
       open_now: true
     });
     const restaurant = response.jsonBody.businesses[0];
+    console.log(response);
     return restaurant;
   } catch (err) {
     console.log(err);
   }
 };
+
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
 app.post("/create/room", async (req, res) => {
@@ -84,8 +71,7 @@ app.post("/create/room", async (req, res) => {
       },
       location: location,
       totalPrice: 0,
-      users: {},
-      yelpData: ""
+      users: {}
     };
     var ref = db.ref("/data");
     var updates = {};
@@ -105,7 +91,7 @@ app.post("/create/user", (req, res) => {
     var ref = db.ref("/data");
     updates["/" + roomName + "/users/" + userName] = 0;
     ref.update(updates);
-    res.send({status: "ok!"});
+    res.send({ status: "ok!" });
   } catch (e) {
     res.sendStatus(400).send(e);
   }
@@ -213,88 +199,55 @@ app.post("/result", async (req, res) => {
   try {
     const isOwner = req.body.isOwner;
     const roomName = req.body.roomName;
-    var roomRef = db.ref("/data/" + roomName);
-    var roomJSON = {};
-    var unfinished = [];
-    await roomRef.on("value", async function(snapshot) {
-        roomJSON = snapshot.val();
+    const isCompleted = false;
 
-        var room = JSON.parse(JSON.stringify(roomJSON));
-        var category = new Map(Object.entries(room.category));
-        var users = new Map(Object.entries(room.users));
-        var totalPrice = room.totalPrice;
-        var resCategory = "";
-        resPrice = Math.round(totalPrice / users.size);
-        //see if all user have finished
-        var ifSend = false;
-        var isFinished = true;
-        users.forEach((value, key, map) => {
-          if (value == 0) {
-            isFinished = false;
-          }
-        });
-        var result = null;
-        var ifYelp = false;
-        //return result if all users have finished
-        if (isFinished) {
-          var location = "";
-          var locationRef = db.ref("/data/" + roomName + "/location");
-          locationRef.on(
-            "value",
-            function(snapshot) {
-              location = snapshot.val();
-            },
-            function(errorObject) {
-              console.log("The read failed: " + errorObject.code);
-            }
-          );
-          var high = 0;
-          category.forEach((value, key, map) => {
-            if (value > high) {
-              high = value;
-              resCategory = key;
-            }
-            ifSend = true;
-          });
-          ifYelp = true;
-        }
-        if(ifYelp){
-          if (isOwner) {
-            // Pushes to database
-            result = await yelpRequest(location, resPrice, resCategory);
-            var updates = {};
-            updates["/" + roomName + "/yelpData"] = result;
-            await ref.update(updates);
-          } else{
-            // fetch from database
-            var yelpRef = db.ref("/data/" + roomName + "/yelpData");
-            yelpRef.on(
-              "value",
-              function(snapshot) {
-                result = snapshot.val();
-              },
-              function(errorObject) {
-                console.log("The read failed: " + errorObject.code);
-              }
-            );
-          }
-        }
-        if (ifSend) {
-          var i = 0;
-          while(i == 0){
-            if(result != ""){
-              res.send({ result, done:true });
-              i = 1;
-            }
-          }
-        }else{
-          res.send({done: false});
-        }
-      },
-      function(errorObject) {
-        console.log("The read failed: " + errorObject.code);
+    var roomRef = db.ref("/data/" + roomName);
+
+    const room_snapshot = await roomRef.once("value");
+    const first_time = room_snapshot.val();
+
+    // First, we need to check if everyone is done updating
+    var isCompleted = true;
+    Object.values(first_time.users).forEach(user => {
+      if (user === 0) {
+        // res.send({ done: false });
+        isCompleted = false;
       }
-    );
+    });
+
+    if (!isCompleted) {
+      res.send({ done: false });
+    } else {
+      const yelp_snapshot = await roomRef.child("yelpData").once("value");
+
+      if (!yelp_snapshot.exists()) {
+        // If yelpData doesnt exist on firebase
+        // We need to check if is owner to update firebase
+        if (isOwner) {
+          // If is owner, let's update!
+          const snapshot = await roomRef.once("value");
+          data = snapshot.val();
+          const category = Object.keys(data.category).reduce((a, b) =>
+            data.category[a] > data.category[b] ? a : b
+          );
+
+          const totalUsers = Object.keys(data.users).length;
+          const location = data.location;
+          const price = data.totalPrice / totalUsers;
+          const yelpData = await yelpRequest(location, price, category);
+          roomRef.update({ yelpData });
+        } else if (!isOwner) {
+          res.send({ done: false });
+        }
+      }
+      const yelp_snapshot_new = await roomRef.child("yelpData").once("value");
+
+      if (yelp_snapshot_new.exists()) {
+        res.send({ result: yelp_snapshot_new.val(), done: true });
+      } else {
+        res.send({ done: false });
+      }
+    }
   } catch (e) {
     console.log(e);
     res.status(400).send(e);
