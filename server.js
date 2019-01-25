@@ -74,8 +74,8 @@ yelpRequest = async (location, price, categories) => {
 app.post("/create/room", async (req, res) => {
   try {
     const location = req.body.location;
-    // const code = Math.floor(1000 + Math.random() * 9000);
     const code = roomNames[Math.floor(Math.random() * roomNames.length)];
+
     let postData = {
       category: {
         American: 0,
@@ -210,6 +210,7 @@ app.post("/update/preference", async (req, res) => {
 
 app.post("/result", async (req, res) => {
   try {
+    const isOwner = req.body.isOwner;
     const roomName = req.body.roomName;
     var roomRef = db.ref("/data/" + roomName);
     var roomJSON = {};
@@ -256,7 +257,28 @@ app.post("/result", async (req, res) => {
             ifSend = true;
           });
 
-          result = await yelpRequest(location, resPrice, resCategory);
+          if (isOwner) {
+            // Pushes to database
+            result = await yelpRequest(location, resPrice, resCategory);
+            var updates = {};
+            updates["/" + roomName + "/yelpData"] = result;
+            await ref.update(updates);
+          } else{
+            // fetch from database
+            var yelpRef = db.ref("/data/" + roomName + "/yelpData");
+            yelpRef.on(
+              "value",
+              function(snapshot) {
+                result = snapshot.val();
+              },
+              function(errorObject) {
+                console.log("The read failed: " + errorObject.code);
+              }
+              
+            );
+          }
+
+          
 
         }
         if (ifSend) {
