@@ -7,29 +7,27 @@ class Price extends Component {
     data: null
   };
 
+  onComplete(num){
+    this.props.updateData('price',num)
+    this.props.updateCurrent('Category')
+  }
+
 
 
   render() {
     return (
       <div className="App">
-        <div className="appCode"> GROUP CODE: <i>{this.props.location.state.code}</i> </div>
+        <div className="appCode"> GROUP CODE:<br/><i>{this.props.code}</i> </div>
         <div className="appRecommend">What's your price range?</div>
-        <Link
-          to={{
-            pathname: "/category",
-            state: { loc: this.props.location.state.loc,
-                     code: this.props.location.state.code}
-          }}
-        >
-          <button className="goButton">$</button>
+
+          <button onClick={()=>this.onComplete(1)} className="goButton">$</button>
           <br />
-          <button className="goButton">$$</button>
+          <button onClick={()=>this.onComplete(2)} className="goButton">$$</button>
           <br />
-          <button className="goButton">$$$</button>
+          <button onClick={()=>this.onComplete(3)} className="goButton">$$$</button>
           <br />
-          <button className="goButton">$$$$</button>
+          <button onClick={()=>this.onComplete(4)} className="goButton">$$$$</button>
           <br />
-        </Link>
 
         <Link to="/code">
           <button

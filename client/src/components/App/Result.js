@@ -13,30 +13,30 @@ class Result extends Component {
     };
   }
 
-  componentWillMount() {
-    // Example postRequest with data. Replace static with form input
-    this.postRequest("/restaurant/select", {
-      location: this.props.location.state.loc
-    })
-      .then(res => {
-        const restaurant = res.selection;
-        this.setState({
-          data: restaurant,
-          name: restaurant.name,
-          image_url: restaurant.image_url,
-          display_phone: restaurant.display_phone,
-          phone: "tel:" + restaurant.phone,
-          rating: restaurant.rating,
-          url: restaurant.url,
-          address1: restaurant.location.address1,
-          city: restaurant.location.city,
-          state: restaurant.location.state,
-          zip_code: restaurant.location.zip_code,
-          APIsuccess: true
-        });
-      })
-      .catch(err => console.log(err));
-  }
+  // componentWillMount() {
+  //   // Example postRequest with data. Replace static with form input
+  //   this.postRequest("/restaurant/select", {
+  //     location: this.props.location.state.loc
+  //   })
+  //     .then(res => {
+  //       const restaurant = res.selection;
+  //       this.setState({
+  //         data: restaurant,
+  //         name: restaurant.name,
+  //         image_url: restaurant.image_url,
+  //         display_phone: restaurant.display_phone,
+  //         phone: "tel:" + restaurant.phone,
+  //         rating: restaurant.rating,
+  //         url: restaurant.url,
+  //         address1: restaurant.location.address1,
+  //         city: restaurant.location.city,
+  //         state: restaurant.location.state,
+  //         zip_code: restaurant.location.zip_code,
+  //         APIsuccess: true
+  //       });
+  //     })
+  //     .catch(err => console.log(err));
+  // }
 
   postRequest = async (route, data = null) => {
     if (!data) {
