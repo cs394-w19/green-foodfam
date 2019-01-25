@@ -13,12 +13,11 @@ class App extends Component {
   state = {
     data: null,
     location: null,
-    code:null,
     price:null,
     category:null,
     current:'Home',
     isOwner:null,
-    username:'hello',
+    name:'hello',
     roomname:null
   };
 
@@ -57,10 +56,11 @@ class App extends Component {
       .then(res => {
         const code = res.code;
         this.setState({
-          code: code,
+          roomname: code,
           current: 'Price',
           isOwner:true
         });
+        this.createUser()
       })
       .catch(err => console.log(err));
   }
@@ -68,7 +68,7 @@ class App extends Component {
   createUser() {
     // Example postRequest with data. Replace static with form input
     this.postRequest("/create/user", {
-      userName: this.state.username,
+      userName: this.state.name,
       roomName: this.state.roomname
     })
       .then(res => {
@@ -98,11 +98,11 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.current === 'Home'){return(<Home updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
+    if (this.state.current === 'Home'){return(<Home updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Code'){return(<Code updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createUser={()=>this.createUser()}/>)}
     if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
-    if (this.state.current === 'Price'){return(<Price code={this.state.code} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
+    if (this.state.current === 'Price'){return(<Price roomname={this.state.roomname} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Result'){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
   }
 }

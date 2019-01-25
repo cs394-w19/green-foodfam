@@ -24,7 +24,7 @@ class Price extends Component {
   render() {
     return (
       <div className="App">
-        <div className="appCode"> GROUP CODE:<br/><i>{this.props.code}</i> </div>
+        <div className="appCode"> GROUP CODE:<br/><i>{this.props.roomname}</i> </div>
         <div className="appRecommend">What's your price range?</div>
 
           <button onClick={()=>this.onComplete(1)} className="goButton">$</button>

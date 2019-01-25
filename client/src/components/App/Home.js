@@ -11,7 +11,8 @@ class Home extends Component {
   state = {
     data: null,
     location: "",
-    current:'app'
+    current:'app',
+    name:null
   };
 
   updateLocation = e => {
@@ -20,15 +21,37 @@ class Home extends Component {
     });
   };
 
+  updateName = e => {
+    this.setState({
+      name: e.target.value
+    });
+  };
+
+  onCompleteLocation(){
+    this.props.updateData('name',this.state.name)
+    this.props.updateCurrent('Location')
+  }
+
+  onCompleteCode(){
+    this.props.updateData('name',this.state.name)
+    this.props.updateCurrent('Code')
+  }
+
   render() {
     return (
       <div className='App'>
         <img src="/logo.png" className="App-logo" alt="logo" />
         <div className="appHeader">FoodFam.</div>
         <br />
-        <button className="goButton" onClick={()=>this.props.updateCurrent('Location')}>Start Group</button>
+        <input
+          className="locationInput"
+          type="text"
+          placeholder='your name...'
+          onChange={e => this.updateName(e)}
+        />
+        <button className="goButton" onClick={()=>this.onCompleteLocation()}>Start Group</button>
         <br/>
-        <button className="goButton" onClick={()=>this.props.updateCurrent('Code')}>Join Group</button>
+        <button className="goButton" onClick={()=>this.onCompleteCode()}>Join Group</button>
       </div>
     );
   }
