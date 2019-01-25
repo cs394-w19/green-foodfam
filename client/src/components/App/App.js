@@ -81,6 +81,32 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
+  updatePreference(){
+    this.postRequest("/update/preference",{
+      userName: this.state.name,
+      roomName: this.state.roomName,
+      priceRange: this.state.price,
+      category: this.state.category
+    })
+      .then(this.getResult())
+  }
+
+  getResult(){
+    this.postRequest("/result",{
+      roomName: this.state.roomName
+    })
+      .then(res => {
+        if (res.done === false){
+          this.getResult()
+        }
+        else{
+          console.log(res.result)
+        }
+      })
+  }
+
+
+
   updateCurrent(cur){
     if (cur === 'Home'){this.setState({current:'Home'})}
     if (cur === 'Code'){this.setState({current:'Code'})}
@@ -100,7 +126,7 @@ class App extends Component {
   render() {
     if (this.state.current === 'Home'){return(<Home updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Code'){return(<Code updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createUser={()=>this.createUser()}/>)}
-    if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
+    if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} updatePreference={()=>this.updatePreference()}/>)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
     if (this.state.current === 'Price'){return(<Price roomname={this.state.roomname} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Result'){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} />)}

@@ -9,6 +9,7 @@ class Price extends Component {
 
   onComplete(category){
     this.props.updateData('category',category)
+    this.props.updatePreference()
     this.props.updateCurrent('Result')
   }
 
