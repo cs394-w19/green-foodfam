@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Link } from "react-router-dom";
 import Code from './Code'
 import Category from './Category'
 import Location from './Location'
@@ -11,6 +10,7 @@ import Loading from './Loading'
 import axios from "axios"
 
 class App extends Component {
+
   state = {
     data: null,
     location: null,
@@ -18,16 +18,10 @@ class App extends Component {
     category:null,
     current:'Home',
     isOwner:null,
-    name:'hello',
+    name:null,
     roomname:null,
     restData:null,
     APISuccess:false
-  };
-
-  updateLocation = e => {
-    this.setState({
-      location: e.target.value
-    });
   };
 
   getRequest = async route => {
@@ -123,8 +117,6 @@ class App extends Component {
       })
       .catch((err)=>console.log(err))
   }
-
-
 
   updateCurrent(cur){
     if (cur === 'Home'){this.setState({current:'Home'})}

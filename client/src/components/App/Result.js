@@ -1,15 +1,10 @@
 import React, { Component } from "react";
-import "./App.css";
-import Loading from "./Loading";
-//import { Link } from "react-router-dom";
-import axios from "axios";
 
 class Result extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null,
-      APIsuccess: false
+      data: null
     };
   }
 
