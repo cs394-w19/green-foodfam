@@ -52,10 +52,11 @@ yelpRequest = async (location, price, categories) => {
     console.log(response);
     return restaurant;
   } catch (err) {
+    // Temporary error handling for now.
+    // TODO: Fix error handling so not static
     setTimeout(() => {
-      yelpRequest(location, 1, categories);
+      yelpRequest("evanston", 1, "american");
     }, 1000);
-    console.log(err);
   }
 };
 
