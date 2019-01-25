@@ -85,7 +85,8 @@ app.post("/create/room", async (req, res) => {
       location: location,
       totalPrice: 0,
       users: {},
-      yelpData: ""
+      yelpData: "",
+      ifYelp: false
     };
     var ref = db.ref("/data");
     var updates = {};
@@ -261,34 +262,47 @@ app.post("/result", async (req, res) => {
         if(ifYelp){
           if (isOwner) {
             // Pushes to database
-            
             result = await yelpRequest(location, resPrice, resCategory);
             console.log("yelp runs");
             var updates = {};
+            var ifYelpUpdates = {}
             updates["/" + roomName + "/yelpData"] = result;
             await ref.update(updates);
+            ifYelpUpdates["/" + roomName + "/ifYelp"] = true;
+            await ref.update(ifYelpUpdates);
           } else{
             // fetch from database
-            var yelpRef = db.ref("/data/" + roomName + "/yelpData");
-            yelpRef.on(
-              "value",
-              function(snapshot) {
-                result = snapshot.val();
-              },
-              function(errorObject) {
-                console.log("The read failed: " + errorObject.code);
+            var i = 0;
+            var ifYelpRef = db.ref("/data/" + roomName + "/ifYelp");
+            var ifYelpDB = false;
+            while(i === 0){
+              ifYelpRef.on(
+                "value",
+                function(snapshot) {
+                  ifYelpDB = snapshot.val();
+                },
+                function(errorObject) {
+                  console.log("The read failed: " + errorObject.code);
+                }
+              );
+              if(ifYelpDB){
+                var yelpRef = db.ref("/data/" + roomName + "/yelpData");
+                yelpRef.on(
+                  "value",
+                  function(snapshot) {
+                    result = snapshot.val();
+                  },
+                  function(errorObject) {
+                    console.log("The read failed: " + errorObject.code);
+                  }
+                );
+                i = 1;
               }
-            );
+            }
           }
         }
         if (ifSend) {
-          var i = 0;
-          while(i == 0){
-            if(result != ""){
-              i = 1;
-              res.send({ result, done:true });
-            }
-          }
+          res.send({ result, done:true });
         }else{
           res.send({done: false});
         }
