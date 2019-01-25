@@ -84,19 +84,22 @@ class App extends Component {
   updatePreference(){
     this.postRequest("/update/preference",{
       userName: this.state.name,
-      roomName: this.state.roomName,
+      roomName: this.state.roomname,
       priceRange: this.state.price,
       category: this.state.category
     })
       .then(this.getResult())
+      .catch((err)=> console.log(err))
   }
 
   getResult(){
+    console.log('get result running')
     this.postRequest("/result",{
       roomName: this.state.roomName
     })
       .then(res => {
         if (res.done === false){
+          console.log('false detected')
           this.getResult()
         }
         else{
@@ -117,7 +120,6 @@ class App extends Component {
   }
 
   updateData(name,value){
-    console.log(name,value,this.state)
     this.setState({
       [name]:value
     })
