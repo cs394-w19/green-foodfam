@@ -261,7 +261,9 @@ app.post("/result", async (req, res) => {
         if(ifYelp){
           if (isOwner) {
             // Pushes to database
+            
             result = await yelpRequest(location, resPrice, resCategory);
+            console.log("yelp runs");
             var updates = {};
             updates["/" + roomName + "/yelpData"] = result;
             await ref.update(updates);
@@ -283,8 +285,8 @@ app.post("/result", async (req, res) => {
           var i = 0;
           while(i == 0){
             if(result != ""){
-              res.send({ result, done:true });
               i = 1;
+              res.send({ result, done:true });
             }
           }
         }else{
