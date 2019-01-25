@@ -16,7 +16,8 @@ class App extends Component {
     code:null,
     price:null,
     category:null,
-    current:'Home'
+    current:'Home',
+    isOwner:null
   };
 
   updateLocation = e => {
@@ -55,14 +56,14 @@ class App extends Component {
         const code = res.code;
         this.setState({
           code: code,
-          current: 'Price'
+          current: 'Price',
+          isOwner:true
         });
       })
       .catch(err => console.log(err));
   }
 
   updateCurrent(cur){
-    console.log(cur)
     if (cur === 'Home'){this.setState({current:'Home'})}
     if (cur === 'Code'){this.setState({current:'Code'})}
     if (cur === 'Category'){this.setState({current:'Category'})}
@@ -83,7 +84,7 @@ class App extends Component {
     if (this.state.current === 'Code'){return(<Code updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
-    if (this.state.current === 'Price'){return(<Price code={this.state.code} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
+    if (this.state.current === 'Price'){return(<Price code={this.state.code} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Result'){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
   }
 }

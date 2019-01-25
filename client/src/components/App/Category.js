@@ -23,14 +23,8 @@ class Price extends Component {
       <div className="App">
         <div className="appQuestion">What are you in the mood for?</div>
         <div style={{ marginLeft: "32%" }}>{categories}</div>
-
-        <Link to="/price">
-          <button
-            className="backButton"
-            style={{ backgroundColor: "rgba(234, 72, 72, .8)" }}>
-            <img className="containedButtonImg" src="/back.png" alt="" />
-          </button>
-        </Link>
+        <br />
+        <button onClick={()=>this.props.updateCurrent('Price')} className="backButton"> Back</button>
       </div>
     );
   }

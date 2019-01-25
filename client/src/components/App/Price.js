@@ -12,7 +12,14 @@ class Price extends Component {
     this.props.updateCurrent('Category')
   }
 
-
+  goBack(){
+    if (this.props.isOwner){
+      this.props.updateCurrent("Location")
+    }
+    if (this.props.isOwner === false){
+      this.props.updateCurrent("Code")
+    }
+  }
 
   render() {
     return (
@@ -28,14 +35,7 @@ class Price extends Component {
           <br />
           <button onClick={()=>this.onComplete(4)} className="goButton">$$$$</button>
           <br />
-
-        <Link to="/code">
-          <button
-            className="backButton"
-            style={{ backgroundColor: "rgba(234, 72, 72, .8)" }}>
-            <img className="containedButtonImg" src="/back.png" alt="" />
-          </button>
-        </Link>
+          <button onClick={()=>this.goBack()} className="backButton"> Back</button>
       </div>
     );
   }

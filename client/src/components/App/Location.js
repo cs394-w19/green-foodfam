@@ -40,16 +40,10 @@ class App extends Component {
           placeholder={this.state.location}
           onChange={e => this.updateLocation(e)}
         />
-        <br />
-        {/*<Link
-          to={{
-            pathname: "/price",
-            state: { loc: `${this.state.location}`,
-                     code: `${this.state.code}` }
-          }}
-        >*/}
+          <br />
           <button onClick={()=>this.onComplete()} className="goButton">GO</button>
-        {/*</Link>*/}
+          <br />
+          <button onClick={()=>this.props.updateCurrent('Home')} className="backButton"> Back</button>
       </div>
     );
   }
