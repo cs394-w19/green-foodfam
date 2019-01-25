@@ -72,17 +72,18 @@ yelpRequest = async (location, price, categories) => {
 
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
-app.get("/create/room", async (req, res) => {
+app.post("/create/room", async (req, res) => {
   try {
+    const location = req.body.location;
     // const code = Math.floor(1000 + Math.random() * 9000);
     const code = roomNames[Math.floor(Math.random() * roomNames.length)];
-    res.send({ code });
     let postData = {
       category: {
         American: 0,
         Mexican: 0,
         Thai: 0
       },
+      location: location,
       totalPrice: 0,
       users: {}
     };
@@ -90,6 +91,7 @@ app.get("/create/room", async (req, res) => {
     var updates = {};
     updates["/" + code] = postData;
     await ref.update(updates);
+    res.send({ code });
   } catch (e) {
     return res.sendStatus(400).send(e);
   }
@@ -214,7 +216,7 @@ app.post("/result", async (req, res) => {
     var unfinished = [];
     await roomRef.on(
       "value",
-      function(snapshot) {
+      async function(snapshot) {
         roomJSON = snapshot.val();
 
         var room = JSON.parse(JSON.stringify(roomJSON));
@@ -231,8 +233,20 @@ app.post("/result", async (req, res) => {
             isFinished = false;
           }
         });
+        var result = null;
         //return result if all users have finished
         if (isFinished) {
+          var location = "";
+          var locationRef = db.ref("/data/" + roomName + "/location");
+          locationRef.on(
+            "value",
+            function(snapshot) {
+              location = snapshot.val();
+            },
+            function(errorObject) {
+              console.log("The read failed: " + errorObject.code);
+            }
+          );
           var high = 0;
           category.forEach((value, key, map) => {
             if (value > high) {
@@ -242,9 +256,10 @@ app.post("/result", async (req, res) => {
             ifSend = true;
           });
           console.log(resPrice + "  " + resCategory);
+          result = await yelpRequest(location, resPrice, resCategory);
         }
         if (ifSend) {
-          res.send({ resPrice, resCategory });
+          res.send({ result });
         }
       },
       function(errorObject) {
