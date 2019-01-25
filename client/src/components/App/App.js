@@ -17,7 +17,9 @@ class App extends Component {
     price:null,
     category:null,
     current:'Home',
-    isOwner:null
+    isOwner:null,
+    username:'hello',
+    roomname:null
   };
 
   updateLocation = e => {
@@ -63,6 +65,22 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
+  createUser() {
+    // Example postRequest with data. Replace static with form input
+    this.postRequest("/create/user", {
+      userName: this.state.username,
+      roomName: this.state.roomname
+    })
+      .then(res => {
+        console.log('API ran')
+        this.setState({
+          current: 'Price',
+          isOwner:false
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   updateCurrent(cur){
     if (cur === 'Home'){this.setState({current:'Home'})}
     if (cur === 'Code'){this.setState({current:'Code'})}
@@ -81,7 +99,7 @@ class App extends Component {
 
   render() {
     if (this.state.current === 'Home'){return(<Home updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
-    if (this.state.current === 'Code'){return(<Code updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
+    if (this.state.current === 'Code'){return(<Code updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createUser={()=>this.createUser()}/>)}
     if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
     if (this.state.current === 'Price'){return(<Price code={this.state.code} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}

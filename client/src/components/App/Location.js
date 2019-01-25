@@ -24,7 +24,7 @@ class App extends Component {
 
   onComplete(){
     this.props.updateData('location',this.state.location)
-    this.props.createGroup()
+    setTimeout(()=>this.props.createGroup(), 200)
   }
 
   render() {

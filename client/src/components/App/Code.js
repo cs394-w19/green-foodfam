@@ -1,18 +1,24 @@
 import React, { Component } from "react";
 import "./App.css";
 import { Link } from "react-router-dom";
+import axios from "axios"
 
 class Code extends Component {
   state = {
     data: null,
-    location: ""
+    code: ""
   };
 
-  updateLocation = e => {
+  updateCode = e => {
     this.setState({
-      location: e.target.value
+      code: e.target.value
     });
   };
+
+  onComplete(){
+    this.props.updateData('roomname',this.state.code)
+    setTimeout(()=>this.props.createUser(), 200)
+  }
 
   render() {
     return (
@@ -22,23 +28,12 @@ class Code extends Component {
           className="locationInput"
           type="tel"
           placeholder="****"
+          onChange={e => this.updateCode(e)}
         />
         <br />
-        <Link
-          to={{
-            pathname: "/price",
-            state: { loc: `Evanston, IL` }
-          }}
-        >
-          <button className="goButton">GO</button>
-        </Link> <br/>
-        <Link to="/">
-          <button
-            className="backButton"
-            style={{ backgroundColor: "rgba(234, 72, 72, .8)" }}>
-            <img className="containedButtonImg" src="/back.png" alt="" />
-          </button> 
-        </Link>
+        <button onClick={()=>this.onComplete()} className="goButton">GO</button>
+        <br/>
+        <button onClick={()=>this.props.updateCurrent('Home')} className="backButton"> Back</button>
       </div>
     );
   }

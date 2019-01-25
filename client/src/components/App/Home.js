@@ -28,9 +28,7 @@ class Home extends Component {
         <br />
         <button className="goButton" onClick={()=>this.props.updateCurrent('Location')}>Start Group</button>
         <br/>
-        <Link to="/code">
-          <button className="goButton">Join Group</button>
-        </Link>
+        <button className="goButton" onClick={()=>this.props.updateCurrent('Code')}>Join Group</button>
       </div>
     );
   }
