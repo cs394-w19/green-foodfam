@@ -1,17 +1,7 @@
 import React, { Component } from "react";
-import "./App.css";
-import { Link } from "react-router-dom";
-import Code from './Code'
-import Category from './Category'
-import Location from './Location'
-import Price from './Price'
-import Result from './Result'
 
 class Home extends Component {
   state = {
-    data: null,
-    location: "",
-    current:'app',
     name:null
   };
 

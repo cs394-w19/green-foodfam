@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Link } from "react-router-dom";
 import Code from './Code'
 import Category from './Category'
 import Location from './Location'
 import Price from './Price'
 import Result from './Result'
 import Home from './Home'
+import Loading from './Loading'
 import axios from "axios"
 
 class App extends Component {
+
   state = {
     data: null,
     location: null,
@@ -17,14 +18,10 @@ class App extends Component {
     category:null,
     current:'Home',
     isOwner:null,
-    name:'hello',
-    roomname:null
-  };
-
-  updateLocation = e => {
-    this.setState({
-      location: e.target.value
-    });
+    name:null,
+    roomname:null,
+    restData:null,
+    APISuccess:false
   };
 
   getRequest = async route => {
@@ -112,12 +109,14 @@ class App extends Component {
         }
         else{
           console.log(res.result)
+          this.setState({
+            restData: res.result,
+            APISuccess:true
+          })
         }
       })
       .catch((err)=>console.log(err))
   }
-
-
 
   updateCurrent(cur){
     if (cur === 'Home'){this.setState({current:'Home'})}
@@ -140,7 +139,8 @@ class App extends Component {
     if (this.state.current === 'Category'){return(<Category updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} updatePreference={()=>this.updatePreference()}/>)}
     if (this.state.current === 'Location'){return(<Location updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} createGroup={()=>this.createGroup()}/>)}
     if (this.state.current === 'Price'){return(<Price roomname={this.state.roomname} isOwner={this.state.isOwner} updateCurrent={(cur)=>this.updateCurrent(cur)} updateData={(name,value)=>this.updateData(name,value)} />)}
-    if (this.state.current === 'Result'){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} />)}
+    if (this.state.current === 'Result' && this.state.APISuccess){return(<Result updateCurrent={(cur)=>this.updateCurrent(cur)} restData={this.state.restData}/>)}
+    return(<Loading/>)
   }
 }
 

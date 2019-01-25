@@ -1,11 +1,6 @@
 import React, { Component } from "react";
-import "./App.css";
-import { Link } from "react-router-dom";
 
 class Price extends Component {
-  state = {
-    data: null,
-  };
 
   onComplete(category){
     this.props.updateData('category',category)
