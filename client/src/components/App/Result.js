@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import Loading from "./Loading";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import axios from "axios";
 
 class Result extends Component {
@@ -91,14 +91,6 @@ class Result extends Component {
           </div>
           <div>{stars}</div>
           <div className="buttonContainer">
-            <Link to="/">
-              <button
-                className="containedButton"
-                style={{ backgroundColor: "rgba(234, 72, 72, .8)" }}
-              >
-                <img className="containedButtonImg" src="/back.png" alt="" />
-              </button>
-            </Link>
             <a href={mapURL} target="_blank" rel="noopener noreferrer">
               <button
                 className="containedButton"
@@ -128,6 +120,7 @@ class Result extends Component {
               </button>
             </a>
           </div>
+          <button onClick={()=>this.props.updateCurrent('Home')} className="backButton">Start Over</button>
         </div>
       );
     } else {
