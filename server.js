@@ -84,7 +84,8 @@ app.post("/create/room", async (req, res) => {
       },
       location: location,
       totalPrice: 0,
-      users: {}
+      users: {},
+      yelpData: ""
     };
     var ref = db.ref("/data");
     var updates = {};
@@ -215,9 +216,7 @@ app.post("/result", async (req, res) => {
     var roomRef = db.ref("/data/" + roomName);
     var roomJSON = {};
     var unfinished = [];
-    await roomRef.on(
-      "value",
-      async function(snapshot) {
+    await roomRef.on("value", async function(snapshot) {
         roomJSON = snapshot.val();
 
         var room = JSON.parse(JSON.stringify(roomJSON));
@@ -235,6 +234,7 @@ app.post("/result", async (req, res) => {
           }
         });
         var result = null;
+        var ifYelp = false;
         //return result if all users have finished
         if (isFinished) {
           var location = "";
@@ -256,29 +256,37 @@ app.post("/result", async (req, res) => {
             }
             ifSend = true;
           });
+          ifYelp = true;
         }
-        if (isOwner) {
-          // Pushes to database
-          result = await yelpRequest(location, resPrice, resCategory);
-          var updates = {};
-          updates["/" + roomName + "/yelpData"] = result;
-          await ref.update(updates);
-        } else{
-          // fetch from database
-          setTimeout(()=>{}, 3000);
-          var yelpRef = db.ref("/data/" + roomName + "/yelpData");
-          yelpRef.on(
-            "value",
-            function(snapshot) {
-              result = snapshot.val();
-            },
-            function(errorObject) {
-              console.log("The read failed: " + errorObject.code);
-            }
-          );
+        if(ifYelp){
+          if (isOwner) {
+            // Pushes to database
+            result = await yelpRequest(location, resPrice, resCategory);
+            var updates = {};
+            updates["/" + roomName + "/yelpData"] = result;
+            await ref.update(updates);
+          } else{
+            // fetch from database
+            var yelpRef = db.ref("/data/" + roomName + "/yelpData");
+            yelpRef.on(
+              "value",
+              function(snapshot) {
+                result = snapshot.val();
+              },
+              function(errorObject) {
+                console.log("The read failed: " + errorObject.code);
+              }
+            );
+          }
         }
         if (ifSend) {
-          res.send({ result, done:true });
+          var i = 0;
+          while(i == 0){
+            if(result != ""){
+              res.send({ result, done:true });
+              i = 1;
+            }
+          }
         }else{
           res.send({done: false});
         }
