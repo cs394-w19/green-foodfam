@@ -9,15 +9,17 @@ class Price extends Component {
 
   onComplete(category){
     this.props.updateData('category',category)
-    this.props.updatePreference()
-    this.props.updateCurrent('Result')
+    setTimeout(()=>{
+      this.props.updatePreference()
+      this.props.updateCurrent('Result')
+    },1000)
   }
 
   render() {
     const yelpList = ["Mexican", "Thai", "American"];
     const categories = yelpList.map((category, i) => {
       return (
-        <div onClick={()=>this.onComplete(category)} className="goButton">{category}</div>
+        <div onClick={()=>this.onComplete(category)} key={i} className="goButton">{category}</div>
       );
     });
     return (

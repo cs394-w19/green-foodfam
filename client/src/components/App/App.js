@@ -95,7 +95,7 @@ class App extends Component {
   getResult(){
     console.log('get result running')
     this.postRequest("/result",{
-      roomName: this.state.roomName
+      roomName: this.state.roomname
     })
       .then(res => {
         if (res.done === false){
