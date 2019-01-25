@@ -73,10 +73,17 @@ class App extends Component {
     })
       .then(res => {
         console.log('API ran')
-        this.setState({
+        if(this.state.isOwner){
+          this.setState({
+            current: 'Price'
+          });
+        }
+        else{
+          this.setState({
           current: 'Price',
           isOwner:false
         });
+      }
       })
       .catch(err => console.log(err));
   }
@@ -95,12 +102,13 @@ class App extends Component {
   getResult(){
     console.log('get result running')
     this.postRequest("/result",{
-      roomName: this.state.roomname
+      roomName: this.state.roomname,
+      isOwner: this.state.isOwner
     })
       .then(res => {
         if (res.done === false){
           console.log('false detected')
-          this.getResult()
+          setTimeout(()=>this.getResult(),10000)
         }
         else{
           console.log(res.result)
