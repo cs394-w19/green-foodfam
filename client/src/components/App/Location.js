@@ -9,13 +9,6 @@ class App extends Component {
     code: null
   };
 
-  componentWillMount() {
-    const val = Math.floor(1000 + Math.random() * 9000);
-    this.setState({
-      code: val
-    });
-  }
-
   updateLocation = e => {
     this.setState({
       location: e.target.value
@@ -30,10 +23,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="appCode">
-          GROUP CODE: <i>{this.state.code}</i>
-        </div>
-        <div className="appRecommend">What's your location?</div>
+        <div className="appQuestion">What's your location?</div>
         <input
           className="locationInput"
           type="text"
