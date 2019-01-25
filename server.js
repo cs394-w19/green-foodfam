@@ -194,59 +194,88 @@ app.post("/update/preference", async (req, res) => {
     res.sendStatus(400).send(e);
   }
 });
+function checkFinished(roomName) {
+  return new Promise((resolve, reject) => {
+    var isCompleted = false;
+    var roomRef = db.ref("/data/" + roomName);
+
+    var timer = setInterval(async () => {
+      if (!isCompleted) {
+        try {
+          console.log("interval for another second!");
+          var room_snapshot = await roomRef.once("value");
+          var room_data = room_snapshot.val();
+          var now_completed = true;
+          Object.values(room_data.users).forEach(user => {
+            if (user === 0) {
+              now_completed = false;
+            }
+          });
+
+          if (now_completed) {
+            isCompleted = true;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        clearInterval(timer);
+        resolve(isCompleted);
+      }
+    }, 1000);
+  });
+}
+
+function pleaseHoldFor(milliseconds) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(true);
+    }, milliseconds);
+  });
+}
 
 app.post("/result", async (req, res) => {
   try {
     const isOwner = req.body.isOwner;
     const roomName = req.body.roomName;
-    const isCompleted = false;
-
     var roomRef = db.ref("/data/" + roomName);
 
-    const room_snapshot = await roomRef.once("value");
-    const first_time = room_snapshot.val();
+    const isCompleted = await checkFinished(roomName);
 
-    // First, we need to check if everyone is done updating
-    var isCompleted = true;
-    Object.values(first_time.users).forEach(user => {
-      if (user === 0) {
-        // res.send({ done: false });
-        isCompleted = false;
+    console.log("we got out of the interval!");
+    if (isCompleted) {
+    }
+
+    const yelp_snapshot = await roomRef.child("yelpData").once("value");
+
+    if (!yelp_snapshot.exists()) {
+      // If yelpData doesnt exist on firebase
+      // We need to check if is owner to update firebase
+      if (isOwner) {
+        // If is owner, let's update!
+        const snapshot = await roomRef.once("value");
+        data = snapshot.val();
+        const category = Object.keys(data.category).reduce((a, b) =>
+          data.category[a] > data.category[b] ? a : b
+        );
+
+        const totalUsers = Object.keys(data.users).length;
+        const location = data.location;
+        const price = data.totalPrice / totalUsers;
+        const yelpData = await yelpRequest(location, price, category);
+        roomRef.update({ yelpData });
+      } else if (!isOwner) {
+        await pleaseHoldFor(3000);
       }
-    });
+    }
+    const yelp_snapshot_new = await roomRef.child("yelpData").once("value");
 
-    if (!isCompleted) {
-      res.send({ done: false });
+    if (yelp_snapshot_new.exists()) {
+      res.send({ result: yelp_snapshot_new.val() });
     } else {
-      const yelp_snapshot = await roomRef.child("yelpData").once("value");
-
-      if (!yelp_snapshot.exists()) {
-        // If yelpData doesnt exist on firebase
-        // We need to check if is owner to update firebase
-        if (isOwner) {
-          // If is owner, let's update!
-          const snapshot = await roomRef.once("value");
-          data = snapshot.val();
-          const category = Object.keys(data.category).reduce((a, b) =>
-            data.category[a] > data.category[b] ? a : b
-          );
-
-          const totalUsers = Object.keys(data.users).length;
-          const location = data.location;
-          const price = data.totalPrice / totalUsers;
-          const yelpData = await yelpRequest(location, price, category);
-          roomRef.update({ yelpData });
-        } else if (!isOwner) {
-          res.send({ done: false });
-        }
-      }
-      const yelp_snapshot_new = await roomRef.child("yelpData").once("value");
-
-      if (yelp_snapshot_new.exists()) {
-        res.send({ result: yelp_snapshot_new.val(), done: true });
-      } else {
-        res.send({ done: false });
-      }
+      res
+        .status(400)
+        .send({ error: "the yelp data does not exist on firebase" });
     }
   } catch (e) {
     console.log(e);
