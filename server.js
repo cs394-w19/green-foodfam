@@ -50,7 +50,7 @@ app.post("/restaurant/select", async (req, res) => {
     });
     res.send({ selection: response.jsonBody.businesses[0] });
   } catch (e) {
-    return res.status(400).send(e);
+    res.status(400).send(e);
   }
 });
 
@@ -69,6 +69,8 @@ yelpRequest = async (location, price, categories) => {
     console.log(err);
   }
 };
+
+
 
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
@@ -93,7 +95,7 @@ app.post("/create/room", async (req, res) => {
     await ref.update(updates);
     res.send({ code });
   } catch (e) {
-    return res.sendStatus(400).send(e);
+    res.sendStatus(400).send(e);
   }
 });
 
@@ -105,8 +107,9 @@ app.post("/create/user", (req, res) => {
     var ref = db.ref("/data");
     updates["/" + roomName + "/users/" + userName] = 0;
     ref.update(updates);
+    res.send({status: "ok!"});
   } catch (e) {
-    return res.sendStatus(400).send(e);
+    res.sendStatus(400).send(e);
   }
 });
 
@@ -135,9 +138,9 @@ app.post("/display/unfinished", async (req, res) => {
         console.log("The read failed: " + errorObject.code);
       }
     );
-    return res.send({ returnList });
+    res.send({ returnList });
   } catch (e) {
-    //return res.sendStatus(400).send(e);
+    res.status(400).send(e);
   }
 });
 
@@ -201,10 +204,10 @@ app.post("/update/preference", async (req, res) => {
         console.log("The read failed: " + errorObject.code);
       }
     );
-    return res.send({ returnList });
+    res.send({ returnList });
     //return users who have value 0 (not finished)
   } catch (e) {
-    return res.sendStatus(400).send(e);
+    res.sendStatus(400).send(e);
   }
 });
 
@@ -255,8 +258,9 @@ app.post("/result", async (req, res) => {
             }
             ifSend = true;
           });
-          console.log(resPrice + "  " + resCategory);
+
           result = await yelpRequest(location, resPrice, resCategory);
+
         }
         if (ifSend) {
           res.send({ result });
@@ -268,6 +272,6 @@ app.post("/result", async (req, res) => {
     );
   } catch (e) {
     console.log(e);
-    //return res.sendStatus(400).send(e);
+    res.status(400).send(e);
   }
 });
