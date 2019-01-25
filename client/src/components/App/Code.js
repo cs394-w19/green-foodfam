@@ -25,7 +25,7 @@ class Code extends Component {
       <div className="App">
         <div className="appQuestion">Enter your group code:</div>
         <input
-          className="locationInput"
+          className="codeInput"
           type="tel"
           placeholder="****"
           onChange={e => this.updateCode(e)}
