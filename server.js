@@ -256,30 +256,26 @@ app.post("/result", async (req, res) => {
             }
             ifSend = true;
           });
-
-          if (isOwner) {
-            // Pushes to database
-            result = await yelpRequest(location, resPrice, resCategory);
-            var updates = {};
-            updates["/" + roomName + "/yelpData"] = result;
-            await ref.update(updates);
-          } else{
-            // fetch from database
-            var yelpRef = db.ref("/data/" + roomName + "/yelpData");
-            yelpRef.on(
-              "value",
-              function(snapshot) {
-                result = snapshot.val();
-              },
-              function(errorObject) {
-                console.log("The read failed: " + errorObject.code);
-              }
-              
-            );
-          }
-
-          
-
+        }
+        if (isOwner) {
+          // Pushes to database
+          result = await yelpRequest(location, resPrice, resCategory);
+          var updates = {};
+          updates["/" + roomName + "/yelpData"] = result;
+          await ref.update(updates);
+        } else{
+          // fetch from database
+          setTimeout(()=>{}, 3000);
+          var yelpRef = db.ref("/data/" + roomName + "/yelpData");
+          yelpRef.on(
+            "value",
+            function(snapshot) {
+              result = snapshot.val();
+            },
+            function(errorObject) {
+              console.log("The read failed: " + errorObject.code);
+            }
+          );
         }
         if (ifSend) {
           res.send({ result, done:true });
