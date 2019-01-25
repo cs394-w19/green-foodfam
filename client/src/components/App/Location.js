@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import { Link } from "react-router-dom";
+import Autocomplete from 'react-google-autocomplete';
 
 class App extends Component {
   state = {
@@ -30,10 +31,17 @@ class App extends Component {
           placeholder={this.state.location}
           onChange={e => this.updateLocation(e)}
         />
-          <br />
-          <button onClick={()=>this.onComplete()} className="goButton">GO</button>
-          <br />
-          <button onClick={()=>this.props.updateCurrent('Home')} className="backButton"> Back</button>
+      <Autocomplete
+        className="locationInput"
+        onPlaceSelected={(place) => this.updateLocation(place)}
+        types={['(regions)']}
+        componentRestrictions={{country: "ru"}}
+        />
+
+        <br />
+        <button onClick={()=>this.onComplete()} className="goButton">GO</button>
+        <br />
+        <button onClick={()=>this.props.updateCurrent('Home')} className="backButton"> Back</button>
       </div>
     );
   }
