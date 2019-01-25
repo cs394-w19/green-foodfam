@@ -11,9 +11,9 @@ class Code extends Component {
     });
   };
 
-  onComplete(){
-    this.props.updateData('roomname',this.state.code)
-    setTimeout(()=>this.props.createUser(), 200)
+  onComplete() {
+    this.props.updateData('roomname', this.state.code)
+    setTimeout(() => this.props.createUser(), 200)
   }
 
   render() {
@@ -22,14 +22,14 @@ class Code extends Component {
         <div className="appQuestion">Enter your group code:</div>
         <input
           className="codeInput"
-          type="tel"
+          type="text"
           placeholder="****"
           onChange={e => this.updateCode(e)}
         />
         <br />
-        <button onClick={()=>this.onComplete()} className="goButton">GO</button>
-        <br/>
-        <button onClick={()=>this.props.updateCurrent('Home')} className="backButton"> Back</button>
+        <button onClick={() => this.onComplete()} className="goButton">GO</button>
+        <br />
+        <button onClick={() => this.props.updateCurrent('Home')} className="backButton"> Back</button>
       </div>
     );
   }
