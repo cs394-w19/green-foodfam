@@ -106,6 +106,7 @@ class App extends Component {
           console.log(res.result)
         }
       })
+      .catch((err)=>console.log(err))
   }
 
 
