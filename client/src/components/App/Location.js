@@ -22,6 +22,11 @@ class App extends Component {
     });
   };
 
+  onComplete(){
+    this.props.updateData('location',this.state.location)
+    this.props.createGroup()
+  }
+
   render() {
     return (
       <div className="App">
@@ -36,15 +41,15 @@ class App extends Component {
           onChange={e => this.updateLocation(e)}
         />
         <br />
-        <Link
+        {/*<Link
           to={{
             pathname: "/price",
             state: { loc: `${this.state.location}`,
                      code: `${this.state.code}` }
           }}
-        >
-          <button className="goButton">GO</button>
-        </Link>
+        >*/}
+          <button onClick={()=>this.onComplete()} className="goButton">GO</button>
+        {/*</Link>*/}
       </div>
     );
   }

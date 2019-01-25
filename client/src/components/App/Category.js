@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 class Price extends Component {
   state = {
-    data: null
+    data: null,
   };
 
   render() {
