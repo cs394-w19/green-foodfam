@@ -95,51 +95,20 @@ class App extends Component {
   }
 
   getResult() {
-    axios
-      .post("/result", {
-        roomName: this.state.roomname,
-        isOwner: this.state.isOwner
-      })
+    console.log("get result running");
+    this.postRequest("/result", {
+      roomName: this.state.roomname,
+      isOwner: this.state.isOwner
+    })
       .then(res => {
-        console.log(res.data.result);
+        console.log(res.result);
         this.setState({
-          restData: res.data.result,
+          restData: res.result,
           APISuccess: true
         });
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(err => console.log(err));
   }
-
-  // getResult() {
-  //   console.log("get result running");
-  //   this.postRequest("/result", {
-  //     roomName: this.state.roomname,
-  //     isOwner: this.state.isOwner
-  //   })
-  //     .then(res => {
-  //       console.log(res.result);
-  //       this.setState({
-  //         restData: res.result,
-  //         APISuccess: true
-  //       });
-  //     })
-  //     // .then(res => {
-  //     //   if (res.done === false) {
-  //     //     console.log("front-end: everyone's not done yet");
-  //     //     setTimeout(() => this.getResult(), 1000);
-  //     //   }
-  //     //   if (res.done === true) {
-  //     //     console.log(res.result);
-  //     //     this.setState({
-  //     //       restData: res.result,
-  //     //       APISuccess: true
-  //     //     });
-  //     //   }
-  //     // })
-  //     .catch(err => console.log(err));
-  // }
   updateCurrent(cur) {
     if (cur === "Home") {
       this.setState({

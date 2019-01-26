@@ -254,10 +254,10 @@ app.post("/result", async (req, res) => {
     var roomRef = db.ref("/data/" + roomName);
 
     // We need to first check if everyone has finished filling out the firebase data
-    const isCompleted = await checkFinished(roomName);
+    const usersFinished = await checkFinished(roomName);
 
     // If that is true, then we continue
-    if (isCompleted) {
+    if (usersFinished) {
       const yelp_snapshot = await roomRef.child("yelpData").once("value");
 
       // Next, we take a look at the yelpData key to see if it exists
@@ -269,7 +269,7 @@ app.post("/result", async (req, res) => {
           const snapshot = await roomRef.once("value");
 
           // Extract the data from the room reference
-          data = snapshot.val();
+          const data = snapshot.val();
 
           // find the category that is selected most frequently on firebase
           const category = Object.keys(data.category).reduce((a, b) =>

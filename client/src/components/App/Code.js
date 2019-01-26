@@ -1,19 +1,19 @@
-import React, { Component } from "react"
+import React, { Component } from "react";
 
 class Code extends Component {
   state = {
-    code: ""
+    code: "****"
   };
 
   updateCode = e => {
     this.setState({
-      code: e.target.value
+      code: e.target.value.toLowerCase()
     });
   };
 
   onComplete() {
-    this.props.updateData('roomname', this.state.code)
-    setTimeout(() => this.props.createUser(), 200)
+    this.props.updateData("roomname", this.state.code);
+    setTimeout(() => this.props.createUser(), 200);
   }
 
   render() {
@@ -23,13 +23,22 @@ class Code extends Component {
         <input
           className="codeInput"
           type="text"
-          placeholder="****"
+          placeholder={this.state.code}
+          text={this.state.code}
           onChange={e => this.updateCode(e)}
         />
         <br />
-        <button onClick={() => this.onComplete()} className="goButton">GO</button>
+        <button onClick={() => this.onComplete()} className="goButton">
+          GO
+        </button>
         <br />
-        <button onClick={() => this.props.updateCurrent('Home')} className="backButton"> Back</button>
+        <button
+          onClick={() => this.props.updateCurrent("Home")}
+          className="backButton"
+        >
+          {" "}
+          Back
+        </button>
       </div>
     );
   }
