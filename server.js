@@ -39,21 +39,6 @@ app.use(bodyParser.json());
 // console.log that your server is up and running
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-// POST route which returns a restaurant
-// It takes in the location data and makes an API request to Yelp before returning to front-end
-app.post("/restaurant/select", async (req, res) => {
-  try {
-    const location = req.body.location;
-    const response = await client.search({
-      term: "restaurant",
-      location: location
-    });
-    return res.send({ selection: response.jsonBody.businesses[0] });
-  } catch (e) {
-    return res.status(400).send(e);
-  }
-});
-
 yelpRequest = async (location, price, categories) => {
   try {
     const response = await client.search({
@@ -63,22 +48,25 @@ yelpRequest = async (location, price, categories) => {
       categories,
       open_now: true
     });
-    const restaurant = response.jsonBody.businesses[0].name;
+    const restaurant = response.jsonBody.businesses[0];
+    console.log(response);
     return restaurant;
   } catch (err) {
-    setTimeout(()=>{
-      yelpRequest(location, price, categories);
-    }, 1000)
-    console.log(err);
+    // Temporary error handling for now.
+    // TODO: Fix error handling so not static
+    setTimeout(() => {
+      yelpRequest("evanston", 1, "american");
+    }, 1000);
   }
 };
+
 // Creates and stores a new room entry on firebase database. returns room_code
 // to front-end to share with other users
 app.post("/create/room", async (req, res) => {
   try {
     const location = req.body.location;
-    //const code = roomNames[Math.floor(Math.random() * roomNames.length)];
-    const code = "test";
+    const code = roomNames[Math.floor(Math.random() * roomNames.length)];
+
     let postData = {
       category: {
         American: 0,
@@ -87,9 +75,7 @@ app.post("/create/room", async (req, res) => {
       },
       location: location,
       totalPrice: 0,
-      users: {},
-      yelpData: {"test": "test"},
-      yelpSaved: false
+      users: {}
     };
     var ref = db.ref("/data");
     var updates = {};
@@ -109,7 +95,7 @@ app.post("/create/user", (req, res) => {
     var ref = db.ref("/data");
     updates["/" + roomName + "/users/" + userName] = 0;
     ref.update(updates);
-    res.send({status: "ok!"});
+    res.send({ status: "ok!" });
   } catch (e) {
     res.sendStatus(400).send(e);
   }
@@ -140,19 +126,18 @@ app.post("/display/unfinished", async (req, res) => {
         console.log("The read failed: " + errorObject.code);
       }
     );
-    return res.send({ returnList });
+    res.send({ returnList });
   } catch (e) {
-    return res.status(400).send(e);
+    res.status(400).send(e);
   }
 });
 
 app.post("/update/preference", async (req, res) => {
   try {
-    const {userName, roomName, priceRange, category} = req.body;
-    // const userName = req.body.userName;
-    // const roomName = req.body.roomName;
-    // const priceRange = req.body.priceRange;
-    // const category = req.body.category;
+    const userName = req.body.userName;
+    const roomName = req.body.roomName;
+    const priceRange = req.body.priceRange;
+    const category = req.body.category;
     var updates = {};
     var prevPriceTotal = 0;
     var prevCategory = 0;
@@ -214,131 +199,120 @@ app.post("/update/preference", async (req, res) => {
   }
 });
 
+// A nice little function which checks if firebase users
+// have completed their preferences
+// if everyone has then we return a resolved boolean value
+// and break out of the interval function
+checkFinished = roomName => {
+  return new Promise((resolve, reject) => {
+    var isCompleted = false;
+    var roomRef = db.ref("/data/" + roomName);
+
+    // SetInterval repeatedly calls the callback function on a time interval
+    // in milliseconds
+    var timer = setInterval(async () => {
+      if (!isCompleted) {
+        try {
+          var room_snapshot = await roomRef.once("value");
+          var room_data = room_snapshot.val();
+          var temp = true;
+          Object.values(room_data.users).forEach(user => {
+            if (user === 0) {
+              temp = false;
+            }
+          });
+
+          if (temp) {
+            isCompleted = true;
+          }
+        } catch (e) {
+          reject(e);
+        }
+      } else {
+        // We want to break out of the setInterval function when users are completed
+        clearInterval(timer);
+        resolve(isCompleted);
+      }
+    }, 1000);
+  });
+};
+
+// A function to wait X amount of time before returning a resolved promise
+// with value boolean true
+pleaseHoldFor = milliseconds => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(true);
+    }, milliseconds);
+  });
+};
+
 app.post("/result", async (req, res) => {
   try {
-    const isOwner = req.body.isOwner;
-    const roomName = req.body.roomName;
+    const { isOwner, roomName } = req.body;
+    // Get a reference of the room firebase
     var roomRef = db.ref("/data/" + roomName);
-    var roomJSON = {};
-    var ifSend = false;
-    var ifYelp = false;
-    var result = {};
-    var isFinished = true;
-    var room = JSON.parse(JSON.stringify(roomJSON));
-    var category = {};
-    var users = {};
-    var totalPrice = 0;
-    var resCategory = "";
-    var goLoop = true;
 
-    while(goLoop){
-      roomRef.on("value", function(snapshot) {
-          roomJSON = snapshot.val();
-          room = JSON.parse(JSON.stringify(roomJSON));
-          category = new Map(Object.entries(room.category));
-          users = new Map(Object.entries(room.users));
-          totalPrice = room.totalPrice;
-          resCategory = "";
-      },
-      function(errorObject) {
-        console.log("The read failed: " + errorObject.code);
-      });
+    // We need to first check if everyone has finished filling out the firebase data
+    const usersFinished = await checkFinished(roomName);
 
-      users.forEach((value, key, map) => {
-        if (value == 0) {
-          isFinished = false;
-        }
-      });
-      if(isFinished === true){
-        goLoop = false;
-      }
-    }
-    
-    resPrice = Math.round(totalPrice / users.size);
-        //see if all user have finished
-        //return result if all users have finished
-    if (isFinished) {
-      var location = "";
-      var locationRef = db.ref("/data/" + roomName + "/location");
-      locationRef.on(
-        "value",
-        function(snapshot) {
-          location = snapshot.val();
-        },
-        function(errorObject) {
-          console.log("The read failed: " + errorObject.code);
-        }
-      );
-      var high = 0;
-      category.forEach((value, key, map) => {
-        if (value > high) {
-          high = value;
-          resCategory = key;
-        }
-      });
-      ifYelp = true;
-    }
+    // If that is true, then we continue
+    if (usersFinished) {
+      const yelp_snapshot = await roomRef.child("yelpData").once("value");
 
-    if(ifYelp){
-      if (isOwner) {
-        // Pushes to database
-        console.log("before request");
-        result = yelpRequest(location, resPrice, resCategory);}
-        console.log("yelp runs");
-        var updates = {};
-        var ifYelpUpdates = {}
-        console.log("result is " + toString(result));
-        updates["/" + roomName + "/yelpData"] = result;
-        ref.update(updates);
-        console.log("yelp data saved");
-        yelpSavedUpdates["/" + roomName + "/yelpSaved"] = true;
-        ref.update(yelpSavedUpdates);
-        console.log("yelpSaved refreshed");
+      // Next, we take a look at the yelpData key to see if it exists
+      if (!yelp_snapshot.exists()) {
+        // If yelpData doesnt exist on firebase
+        // We need to check if is owner to update firebase
+        if (isOwner) {
+          // If is owner, let's update!
+          const snapshot = await roomRef.once("value");
 
-    } else{
-      // fetch from database
-      var i = 0;
-      var yelpSavedRef = db.ref("/data/" + roomName + "/yelpSaved");
-      var ifYelpDB = false;
-      while(i === 0){
-        yelpSavedRef.on(
-          "value",
-          function(snapshot) {
-            ifYelpDB = snapshot.val();
-            console.log("ifYelpDB is:  " + ifYelpDB);
-          },
-          function(errorObject) {
-            console.log("The read failed: " + errorObject.code);
-          }
-        );
-        if(ifYelpDB){
-          var yelpRef = db.ref("/data/" + roomName + "/yelpData");
-          yelpRef.on(
-            "value",
-            function(snapshot) {
-              result = snapshot.val();
-              console.log("result is: -----------------------" + result);
-            },
-            function(errorObject) {
-              console.log("The read failed: " + errorObject.code);
-            }
+          // Extract the data from the room reference
+          const data = snapshot.val();
+
+          // find the category that is selected most frequently on firebase
+          const category = Object.keys(data.category).reduce((a, b) =>
+            data.category[a] > data.category[b] ? a : b
           );
-          i = 1;
-          ifSend = true;
+
+          // Find the total number of users on firebase
+          const totalUsers = Object.keys(data.users).length;
+
+          // Get the location from firebase
+          const location = data.location;
+
+          // Yelp does not accept floats, so round down fractions.
+          const price = Math.floor(data.totalPrice / totalUsers);
+
+          // Make a request to the yelp api
+          const yelpData = await yelpRequest(location, price, category);
+
+          // Update the database with the new key yelpData
+          roomRef.update({ yelpData });
+        } else if (!isOwner) {
+          // If the current user is not the owner, then we simply have them wait
+          // two seconds while the owner updates the firebase yelpData
+          await pleaseHoldFor(2000);
         }
       }
-    }
-      
-    try{
-      if (ifSend) {
-        return res.send({ result, done:true });
-      }else{
-        return res.send({done: false});
+
+      const yelp_snapshot_new = await roomRef.child("yelpData").once("value");
+      // Now we can finally check if the new snapshot is initalized
+      if (yelp_snapshot_new.exists()) {
+        // if so we send off to the front end and everyone's happy!
+        res.send({ result: yelp_snapshot_new.val() });
+      } else {
+        // Else we know that the yelpData key must not exist
+        throw "the yelp database does not exist on firebase";
       }
-    } catch (e){
-      console.log("errrrrrrrrrrrrror:   " + e);
+    } else {
+      // Else we know that everyone must not be finished yet
+      throw "Everyone is not finished still";
     }
   } catch (e) {
-    return res.status(400).send(e);
+    // Catch any errors we may have thrown previously and send the results to
+    // front-end for error checking
+    res.status(400).send(e);
   }
 });
