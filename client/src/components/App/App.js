@@ -97,25 +97,25 @@ class App extends Component {
   }
 
   getResult(){
-    console.log('get result running')
+    console.log('get result running for a user');
     this.postRequest("/result",{
       roomName: this.state.roomname,
       isOwner: this.state.isOwner
     })
       .then(res => {
         if (res.done === false){
-          console.log('false detected')
-          setTimeout(()=>this.getResult(),10000)
+          console.log('false detected');
+          setTimeout(()=>this.getResult(), 500);
         }
         else{
-          console.log(res.result)
+          console.log(res.result);
           this.setState({
             restData: res.result,
             APISuccess:true
-          })
+          });
         }
       })
-      .catch((err)=>console.log(err))
+      .catch((err)=>console.log(err));
   }
 
   updateCurrent(cur){

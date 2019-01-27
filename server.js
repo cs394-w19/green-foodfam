@@ -48,9 +48,9 @@ app.post("/restaurant/select", async (req, res) => {
       term: "restaurant",
       location: location
     });
-    res.send({ selection: response.jsonBody.businesses[0] });
+    return res.send({ selection: response.jsonBody.businesses[0] });
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 });
 
@@ -63,9 +63,12 @@ yelpRequest = async (location, price, categories) => {
       categories,
       open_now: true
     });
-    const restaurant = response.jsonBody.businesses[0];
+    const restaurant = response.jsonBody.businesses[0].name;
     return restaurant;
   } catch (err) {
+    setTimeout(()=>{
+      yelpRequest(location, price, categories);
+    }, 1000)
     console.log(err);
   }
 };
@@ -74,8 +77,8 @@ yelpRequest = async (location, price, categories) => {
 app.post("/create/room", async (req, res) => {
   try {
     const location = req.body.location;
-    const code = roomNames[Math.floor(Math.random() * roomNames.length)];
-
+    //const code = roomNames[Math.floor(Math.random() * roomNames.length)];
+    const code = "test";
     let postData = {
       category: {
         American: 0,
@@ -85,8 +88,8 @@ app.post("/create/room", async (req, res) => {
       location: location,
       totalPrice: 0,
       users: {},
-      yelpData: "",
-      ifYelp: false
+      yelpData: {"test": "test"},
+      yelpSaved: false
     };
     var ref = db.ref("/data");
     var updates = {};
@@ -137,18 +140,19 @@ app.post("/display/unfinished", async (req, res) => {
         console.log("The read failed: " + errorObject.code);
       }
     );
-    res.send({ returnList });
+    return res.send({ returnList });
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 });
 
 app.post("/update/preference", async (req, res) => {
   try {
-    const userName = req.body.userName;
-    const roomName = req.body.roomName;
-    const priceRange = req.body.priceRange;
-    const category = req.body.category;
+    const {userName, roomName, priceRange, category} = req.body;
+    // const userName = req.body.userName;
+    // const roomName = req.body.roomName;
+    // const priceRange = req.body.priceRange;
+    // const category = req.body.category;
     var updates = {};
     var prevPriceTotal = 0;
     var prevCategory = 0;
@@ -216,103 +220,125 @@ app.post("/result", async (req, res) => {
     const roomName = req.body.roomName;
     var roomRef = db.ref("/data/" + roomName);
     var roomJSON = {};
-    var unfinished = [];
-    await roomRef.on("value", async function(snapshot) {
-        roomJSON = snapshot.val();
+    var ifSend = false;
+    var ifYelp = false;
+    var result = {};
+    var isFinished = true;
+    var room = JSON.parse(JSON.stringify(roomJSON));
+    var category = {};
+    var users = {};
+    var totalPrice = 0;
+    var resCategory = "";
+    var goLoop = true;
 
-        var room = JSON.parse(JSON.stringify(roomJSON));
-        var category = new Map(Object.entries(room.category));
-        var users = new Map(Object.entries(room.users));
-        var totalPrice = room.totalPrice;
-        var resCategory = "";
-        resPrice = Math.round(totalPrice / users.size);
+    while(goLoop){
+      roomRef.on("value", function(snapshot) {
+          roomJSON = snapshot.val();
+          room = JSON.parse(JSON.stringify(roomJSON));
+          category = new Map(Object.entries(room.category));
+          users = new Map(Object.entries(room.users));
+          totalPrice = room.totalPrice;
+          resCategory = "";
+      },
+      function(errorObject) {
+        console.log("The read failed: " + errorObject.code);
+      });
+
+      users.forEach((value, key, map) => {
+        if (value == 0) {
+          isFinished = false;
+        }
+      });
+      if(isFinished === true){
+        goLoop = false;
+      }
+    }
+    
+    resPrice = Math.round(totalPrice / users.size);
         //see if all user have finished
-        var ifSend = false;
-        var isFinished = true;
-        users.forEach((value, key, map) => {
-          if (value == 0) {
-            isFinished = false;
-          }
-        });
-        var result = null;
-        var ifYelp = false;
         //return result if all users have finished
-        if (isFinished) {
-          var location = "";
-          var locationRef = db.ref("/data/" + roomName + "/location");
-          locationRef.on(
+    if (isFinished) {
+      var location = "";
+      var locationRef = db.ref("/data/" + roomName + "/location");
+      locationRef.on(
+        "value",
+        function(snapshot) {
+          location = snapshot.val();
+        },
+        function(errorObject) {
+          console.log("The read failed: " + errorObject.code);
+        }
+      );
+      var high = 0;
+      category.forEach((value, key, map) => {
+        if (value > high) {
+          high = value;
+          resCategory = key;
+        }
+      });
+      ifYelp = true;
+    }
+
+    if(ifYelp){
+      if (isOwner) {
+        // Pushes to database
+        console.log("before request");
+        result = yelpRequest(location, resPrice, resCategory);}
+        console.log("yelp runs");
+        var updates = {};
+        var ifYelpUpdates = {}
+        console.log("result is " + toString(result));
+        updates["/" + roomName + "/yelpData"] = result;
+        ref.update(updates);
+        console.log("yelp data saved");
+        yelpSavedUpdates["/" + roomName + "/yelpSaved"] = true;
+        ref.update(yelpSavedUpdates);
+        console.log("yelpSaved refreshed");
+
+    } else{
+      // fetch from database
+      var i = 0;
+      var yelpSavedRef = db.ref("/data/" + roomName + "/yelpSaved");
+      var ifYelpDB = false;
+      while(i === 0){
+        yelpSavedRef.on(
+          "value",
+          function(snapshot) {
+            ifYelpDB = snapshot.val();
+            console.log("ifYelpDB is:  " + ifYelpDB);
+          },
+          function(errorObject) {
+            console.log("The read failed: " + errorObject.code);
+          }
+        );
+        if(ifYelpDB){
+          var yelpRef = db.ref("/data/" + roomName + "/yelpData");
+          yelpRef.on(
             "value",
             function(snapshot) {
-              location = snapshot.val();
+              result = snapshot.val();
+              console.log("result is: -----------------------" + result);
             },
             function(errorObject) {
               console.log("The read failed: " + errorObject.code);
             }
           );
-          var high = 0;
-          category.forEach((value, key, map) => {
-            if (value > high) {
-              high = value;
-              resCategory = key;
-            }
-            ifSend = true;
-          });
-          ifYelp = true;
+          i = 1;
+          ifSend = true;
         }
-        if(ifYelp){
-          if (isOwner) {
-            // Pushes to database
-            result = await yelpRequest(location, resPrice, resCategory);
-            console.log("yelp runs");
-            var updates = {};
-            var ifYelpUpdates = {}
-            updates["/" + roomName + "/yelpData"] = result;
-            await ref.update(updates);
-            ifYelpUpdates["/" + roomName + "/ifYelp"] = true;
-            await ref.update(ifYelpUpdates);
-          } else{
-            // fetch from database
-            var i = 0;
-            var ifYelpRef = db.ref("/data/" + roomName + "/ifYelp");
-            var ifYelpDB = false;
-            while(i === 0){
-              ifYelpRef.on(
-                "value",
-                function(snapshot) {
-                  ifYelpDB = snapshot.val();
-                },
-                function(errorObject) {
-                  console.log("The read failed: " + errorObject.code);
-                }
-              );
-              if(ifYelpDB){
-                var yelpRef = db.ref("/data/" + roomName + "/yelpData");
-                yelpRef.on(
-                  "value",
-                  function(snapshot) {
-                    result = snapshot.val();
-                  },
-                  function(errorObject) {
-                    console.log("The read failed: " + errorObject.code);
-                  }
-                );
-                i = 1;
-              }
-            }
-          }
-        }
-        if (ifSend) {
-          res.send({ result, done:true });
-        }else{
-          res.send({done: false});
-        }
-      },
-      function(errorObject) {
-        console.log("The read failed: " + errorObject.code);
       }
-    );
+    }
+      
+    try{
+      if (ifSend) {
+        return res.send({ result, done:true });
+      }else{
+        return res.send({done: false});
+      }
+    } catch (e){
+      console.log("errrrrrrrrrrrrror:   " + e);
+    }
   } catch (e) {
-    console.log(e);
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 });
