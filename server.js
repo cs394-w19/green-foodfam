@@ -180,10 +180,13 @@ app.post("/update/preference", async (req, res) => {
 
         var room = JSON.parse(JSON.stringify(roomJSON));
         var users = {};
-        if(room.users != null){
-            users = new Map(Object.entries(room.users));
-        }else{
-            console.log("room user null");
+        while(true){
+            if(room.users != null){
+                users = new Map(Object.entries(room.users));
+                break;
+            }else{
+                console.log("room user null");
+            }
         }
 
         users.forEach((value, key, map) => {
