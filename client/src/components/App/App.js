@@ -69,6 +69,9 @@ class App extends Component {
     })
       .then(res => {
         console.log("API ran");
+        this.setState({
+            name: res.userName
+        })
         if (this.state.isOwner) {
           this.setState({
             current: "Price"

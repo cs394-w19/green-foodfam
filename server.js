@@ -87,16 +87,33 @@ app.post("/create/room", async (req, res) => {
   }
 });
 
+function makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+    for (var i = 0; i < 5; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
+}
+
 app.post("/create/user", (req, res) => {
   try {
-    const userName = req.body.userName;
-    const roomName = req.body.roomName;
+    var userName = "";
+    var roomName = req.body.roomName;
     var updates = {};
     var ref = db.ref("/data");
+    if(req.body.userName === null || req.body.userName === undefined){
+        userName = makeid();
+        console.log(userName);
+    }else{
+        userName = req.body.userName;
+    }
     updates["/" + roomName + "/users/" + userName] = 0;
     ref.update(updates);
-    res.send({ status: "ok!" });
+    res.send({ userName });
   } catch (e) {
+    console.log(e);
     res.sendStatus(400).send(e);
   }
 });
