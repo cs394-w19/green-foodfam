@@ -49,7 +49,7 @@ yelpRequest = async (location, price, categories) => {
       open_now: true
     });
     const restaurant = response.jsonBody.businesses[0];
-    console.log(response);
+    console.log("52response " + response);
     return restaurant;
   } catch (err) {
     // Temporary error handling for now.
@@ -65,7 +65,7 @@ yelpRequest = async (location, price, categories) => {
 app.post("/create/room", async (req, res) => {
   try {
     const location = req.body.location;
-    const code = roomNames[Math.floor(Math.random() * roomNames.length)];
+    const code = await roomNames[Math.floor(Math.random() * roomNames.length)];
 
     let postData = {
       category: {
@@ -120,7 +120,7 @@ app.post("/display/unfinished", async (req, res) => {
             returnList.push(key);
           }
         });
-        console.log(returnList);
+        console.log("123 returnList: " + returnList);
       },
       function(errorObject) {
         console.log("The read failed: " + errorObject.code);
@@ -176,17 +176,22 @@ app.post("/update/preference", async (req, res) => {
       function(snapshot) {
         returnList = [];
         roomJSON = snapshot.val();
-        console.log(roomJSON);
+        //console.log(roomJSON);
 
         var room = JSON.parse(JSON.stringify(roomJSON));
-        var users = new Map(Object.entries(room.users));
+        var users = {};
+        if(room.users != null){
+            users = new Map(Object.entries(room.users));
+        }else{
+            console.log("room user null");
+        }
 
         users.forEach((value, key, map) => {
           if (value == 0) {
             returnList.push(key);
           }
         });
-        console.log(returnList);
+        console.log("194returnlist: " + returnList);
       },
       function(errorObject) {
         console.log("The read failed: " + errorObject.code);
