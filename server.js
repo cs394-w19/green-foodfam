@@ -88,13 +88,13 @@ app.post("/create/room", async (req, res) => {
 });
 
 function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
-    for (var i = 0; i < 5; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
-    return text;
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 5; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }
 
 app.post("/create/user", (req, res) => {
@@ -103,11 +103,11 @@ app.post("/create/user", (req, res) => {
     var roomName = req.body.roomName;
     var updates = {};
     var ref = db.ref("/data");
-    if(req.body.userName === null || req.body.userName === undefined){
-        userName = makeid();
-        console.log(userName);
-    }else{
-        userName = req.body.userName;
+    if (req.body.userName === null || req.body.userName === undefined) {
+      userName = makeid();
+      console.log(userName);
+    } else {
+      userName = req.body.userName;
     }
     updates["/" + roomName + "/users/" + userName] = 0;
     ref.update(updates);
@@ -124,7 +124,7 @@ app.post("/display/unfinished", async (req, res) => {
     var roomRef = ref.child(roomName);
     roomRef.on(
       "value",
-      function(snapshot) {
+      function (snapshot) {
         returnList = [];
         roomJSON = snapshot.val();
         //console.log(roomJSON);
@@ -139,7 +139,7 @@ app.post("/display/unfinished", async (req, res) => {
         });
         console.log("123 returnList: " + returnList);
       },
-      function(errorObject) {
+      function (errorObject) {
         console.log("The read failed: " + errorObject.code);
       }
     );
@@ -165,20 +165,20 @@ app.post("/update/preference", async (req, res) => {
     //get previous priceTotal
     priceRef.on(
       "value",
-      function(snapshot) {
+      function (snapshot) {
         prevPriceTotal = snapshot.val();
       },
-      function(errorObject) {
+      function (errorObject) {
         console.log("The read failed: " + errorObject.code);
       }
     );
 
     categoryRef.on(
       "value",
-      function(snapshot) {
+      function (snapshot) {
         prevCategory = snapshot.val();
       },
-      function(errorObject) {
+      function (errorObject) {
         console.log("The read failed: " + errorObject.code);
       }
     );
@@ -186,38 +186,38 @@ app.post("/update/preference", async (req, res) => {
     updates["/totalPrice"] = Number(priceRange) + Number(prevPriceTotal);
     updates["/users/" + userName] = 1;
     updates["/category/" + category] = Number(prevCategory) + 1;
-    roomRef.update(updates);
+    await roomRef.update(updates);
 
-    roomRef.on(
-      "value",
-      function(snapshot) {
-        returnList = [];
-        roomJSON = snapshot.val();
-        //console.log(roomJSON);
+    // roomRef.on(
+    //   "value",
+    //   function (snapshot) {
+    //     returnList = [];
+    //     roomJSON = snapshot.val();
+    //     //console.log(roomJSON);
+    //     console.log("194returnlist: " + returnList);
+    //   },
+    //   function (errorObject) {
+    //     console.log("The read failed: " + errorObject.code);
+    //   }
+    // );
+    // var room = JSON.parse(JSON.stringify(roomJSON));
+    // var users = {};
+    // while (true) {
+    //   if (room.users != null) {
+    //     users = new Map(Object.entries(room.users));
+    //     break;
+    //   } else {
+    //     console.log("room user null");
+    //   }
+    // }
 
-        var room = JSON.parse(JSON.stringify(roomJSON));
-        var users = {};
-        while(true){
-            if(room.users != null){
-                users = new Map(Object.entries(room.users));
-                break;
-            }else{
-                console.log("room user null");
-            }
-        }
-
-        users.forEach((value, key, map) => {
-          if (value == 0) {
-            returnList.push(key);
-          }
-        });
-        console.log("194returnlist: " + returnList);
-      },
-      function(errorObject) {
-        console.log("The read failed: " + errorObject.code);
-      }
-    );
-    res.send({ returnList });
+    // users.forEach((value, key, map) => {
+    //   if (value == 0) {
+    //     returnList.push(key);
+    //   }
+    // });
+    // res.send({ returnList });
+    res.send({ down: true });
     //return users who have value 0 (not finished)
   } catch (e) {
     res.sendStatus(400).send(e);
