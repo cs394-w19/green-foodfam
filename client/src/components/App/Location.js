@@ -19,7 +19,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="appQuestion">What's your location?</div>
+        <div className="appQuestion">Enter your group's location:</div>
         <input
           className="locationInput"
           type="text"
@@ -28,7 +28,7 @@ class App extends Component {
         />
 
         <br />
-        <button onClick={()=>this.onComplete()} className="goButton">GO</button>
+        <button onClick={()=>this.onComplete()} className="goButton">Start</button>
         <br />
         <button onClick={()=>this.props.updateCurrent('Home')} className="backButton"> Back</button>
       </div>

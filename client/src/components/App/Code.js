@@ -28,9 +28,7 @@ class Code extends Component {
           onChange={e => this.updateCode(e)}
         />
         <br />
-        <button onClick={() => this.onComplete()} className="goButton">
-          GO
-        </button>
+        <button onClick={() => this.onComplete()} className="goButton"> Join </button>
         <br />
         <button
           onClick={() => this.props.updateCurrent("Home")}

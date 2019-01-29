@@ -7,6 +7,7 @@ import Price from "./Price";
 import Result from "./Result";
 import Home from "./Home";
 import Loading from "./Loading";
+import Wait from "./Wait";
 import axios from "axios";
 
 class App extends Component {
@@ -53,7 +54,7 @@ class App extends Component {
         const code = res.code;
         this.setState({
           roomname: code,
-          current: "Price",
+          current: "Wait",
           isOwner: true
         });
         this.createUser();
@@ -74,11 +75,11 @@ class App extends Component {
         })
         if (this.state.isOwner) {
           this.setState({
-            current: "Price"
+            current: "Wait"
           });
         } else {
           this.setState({
-            current: "Price",
+            current: "Wait",
             isOwner: false
           });
         }
@@ -120,7 +121,6 @@ class App extends Component {
         location: null,
         price: null,
         category: null,
-        current: "Home",
         isOwner: null,
         name: null,
         roomname: null,
@@ -136,6 +136,9 @@ class App extends Component {
     }
     if (cur === "Location") {
       this.setState({ current: "Location" });
+    }
+    if (cur === "Wait") {
+      this.setState({ current: "Wait" });
     }
     if (cur === "Price") {
       this.setState({ current: "Price" });
@@ -184,6 +187,15 @@ class App extends Component {
           updateCurrent={cur => this.updateCurrent(cur)}
           updateData={(name, value) => this.updateData(name, value)}
           createGroup={() => this.createGroup()}
+        />
+      );
+    }
+    if (this.state.current === "Wait") {
+      return (
+        <Wait
+          roomname={this.state.roomname}
+          isOwner={this.state.isOwner}
+          updateCurrent={cur => this.updateCurrent(cur)}
         />
       );
     }

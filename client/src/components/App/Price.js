@@ -7,21 +7,22 @@ class Price extends Component {
     this.props.updateCurrent('Category')
   }
 
-  goBack(){
-    if (this.props.isOwner){
-      this.props.updateCurrent("Location")
-    }
-    if (this.props.isOwner === false){
-      this.props.updateCurrent("Code")
-    }
+  goBack() {
+    this.props.updateCurrent('Wait')
   }
+  // goBack(){
+  //   if (this.props.isOwner){
+  //     this.props.updateCurrent("Wait")
+  //   }
+  //   if (this.props.isOwner === false){
+  //     this.props.updateCurrent("Wait")
+  //   }
+  // }
 
   render() {
     return (
       <div className="App">
-        <div className="appCode"> GROUP CODE:<br/><i>{this.props.roomname}</i> </div>
-        <div className="appRecommend">What's your price range?</div>
-
+        <div className="appQuestion">What's your price range?</div>
           <button onClick={()=>this.onComplete(1)} className="goButton">$</button>
           <br />
           <button onClick={()=>this.onComplete(2)} className="goButton">$$</button>
