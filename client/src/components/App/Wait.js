@@ -21,7 +21,7 @@ class Wait extends Component {
         <div className="appQuestion"> Group Created! <br /> <br />
           <div className="codeBanner">
             <img src="/redbanner.png" className="App-banner" alt="banner" />
-            GROUP CODE:<br/><i>{this.props.roomname}</i> </div>
+            GROUP CODE: <br/><i>{this.props.roomname}</i> </div>
             <img src="/redbanner.png" className="App-banner" alt="banner" />
           <button onClick={()=>this.onComplete(1)} className="goButton">Continue</button>
           <br />
