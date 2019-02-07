@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import UserCount from "./UserCount";
 
 class Result extends Component {
   constructor(props) {
@@ -43,6 +44,7 @@ class Result extends Component {
 
     return (
       <div className="App">
+        <UserCount roomname={this.props.roomname} />
         <div className="appRecommend">Your Group's Recommendation:</div>
         <img
           src={this.state.image_url}
