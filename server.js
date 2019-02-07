@@ -86,6 +86,7 @@ app.post("/create/room", async (req, res) => {
       location: location,
       totalPrice: 0,
       users: {},
+      userPrices: {},
       count: 0
     };
     var ref = db.ref("/data");
@@ -126,6 +127,7 @@ app.post("/create/user", async (req, res) => {
       userName = req.body.userName;
     }
     updates["/" + roomName + "/users/" + userName] = 0;
+    updates["/" + roomName + "/userPrices/" + userName] = 0;
     await roomRef.child("count").once("value", snapshot => {
       roomCount = snapshot.val() + 1;
     });
@@ -208,6 +210,7 @@ app.post("/update/preference", async (req, res) => {
     );
 
     updates["/totalPrice"] = Number(priceRange) + Number(prevPriceTotal);
+    updates["/userPrices/" + userName] = priceRange;
     updates["/users/" + userName] = 1;
     updates["/category/" + category] = Number(prevCategory) + 1;
     await roomRef.update(updates);
@@ -304,8 +307,9 @@ app.post("/result", async (req, res) => {
           // Get the location from firebase
           const location = data.location;
 
-          // Yelp does not accept floats, so round down fractions.
-          const price = Math.floor(data.totalPrice / totalUsers);
+          // Get minimum price
+          const prices = Object.values(data.userPrices);
+          const price = Math.min(...prices);
 
           // Make a request to the yelp api
           const yelpData = await yelpRequest(location, price, category);
