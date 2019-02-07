@@ -79,7 +79,8 @@ app.post("/create/room", async (req, res) => {
       },
       location: location,
       totalPrice: 0,
-      users: {}
+      users: {},
+      count: 0
     };
     var ref = db.ref("/data");
     var updates = {};
@@ -104,12 +105,14 @@ function makeid() {
   return text;
 }
 
-app.post("/create/user", (req, res) => {
+app.post("/create/user", async (req, res) => {
   try {
     var userName = "";
     var roomName = req.body.roomName;
+    var roomCount = null;
     var updates = {};
     var ref = db.ref("/data");
+    var roomRef = ref.child(roomName);
     if (req.body.userName === null || req.body.userName === undefined) {
       userName = makeid();
       console.log(userName);
@@ -117,7 +120,11 @@ app.post("/create/user", (req, res) => {
       userName = req.body.userName;
     }
     updates["/" + roomName + "/users/" + userName] = 0;
-    ref.update(updates);
+    await roomRef.child("count").once("value", snapshot => {
+      roomCount = snapshot.val() + 1;
+    });
+    updates["/" + roomName + "/count"] = roomCount;
+    await ref.update(updates);
     res.send({
       userName
     });
@@ -133,7 +140,7 @@ app.post("/display/unfinished", async (req, res) => {
     var roomRef = ref.child(roomName);
     roomRef.on(
       "value",
-      function(snapshot) {
+      function (snapshot) {
         returnList = [];
         roomJSON = snapshot.val();
         //console.log(roomJSON);
@@ -148,7 +155,7 @@ app.post("/display/unfinished", async (req, res) => {
         });
         console.log("123 returnList: " + returnList);
       },
-      function(errorObject) {
+      function (errorObject) {
         console.log("The read failed: " + errorObject.code);
       }
     );
@@ -176,20 +183,20 @@ app.post("/update/preference", async (req, res) => {
     //get previous priceTotal
     priceRef.on(
       "value",
-      function(snapshot) {
+      function (snapshot) {
         prevPriceTotal = snapshot.val();
       },
-      function(errorObject) {
+      function (errorObject) {
         console.log("The read failed: " + errorObject.code);
       }
     );
 
     categoryRef.on(
       "value",
-      function(snapshot) {
+      function (snapshot) {
         prevCategory = snapshot.val();
       },
-      function(errorObject) {
+      function (errorObject) {
         console.log("The read failed: " + errorObject.code);
       }
     );

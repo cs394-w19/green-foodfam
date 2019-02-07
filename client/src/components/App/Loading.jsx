@@ -1,9 +1,11 @@
 import React, { Component } from "react";
+import UserCount from "./UserCount";
 
 class Loading extends Component {
   render() {
     return (
       <div className="App" style={{ textAlign: "center" }}>
+        <UserCount roomname={this.props.roomname} />
         <div style={{ height: "200px" }} />
         <div className="sk-cube-grid">
           <div className="sk-cube sk-cube1" />

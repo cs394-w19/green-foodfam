@@ -70,7 +70,7 @@ class App extends Component {
       .then(res => {
         console.log("API ran");
         this.setState({
-            name: res.userName
+          name: res.userName
         })
         if (this.state.isOwner) {
           this.setState({
@@ -172,6 +172,7 @@ class App extends Component {
     if (this.state.current === "Category") {
       return (
         <Category
+          roomname={this.state.roomname}
           updateCurrent={cur => this.updateCurrent(cur)}
           updateData={(name, value) => this.updateData(name, value)}
           updatePreference={() => this.updatePreference()}
@@ -200,12 +201,13 @@ class App extends Component {
     if (this.state.current === "Result" && this.state.APISuccess) {
       return (
         <Result
+          roomname={this.state.roomname}
           updateCurrent={cur => this.updateCurrent(cur)}
           restData={this.state.restData}
         />
       );
     }
-    return <Loading />;
+    return <Loading roomname={this.state.roomname} />;
   }
 }
 

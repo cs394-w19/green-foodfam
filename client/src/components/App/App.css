@@ -17,7 +17,7 @@ a {
 .appQuestion {
   font-size: 32pt;
   font-weight: 900;
-  padding: 30% 20px 10px 20px;
+  padding: 20% 20px 10px 20px;
 }
 
 .appQuestion2 {
@@ -148,7 +148,7 @@ a {
 .sk-cube-grid {
   width: 100px;
   height: 100px;
-  margin: 100px auto;
+  margin: 35px auto;
 }
 
 .sk-cube-grid .sk-cube {
@@ -306,4 +306,34 @@ a {
   right: 10px;
   cursor: pointer;
   transition: all .1s;
+}
+
+.countContainer {
+  height: 2.5em;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  padding-top: 0.2em;
+}
+
+.countCircle {
+  width: 1em;
+  line-height: 1em;
+  border-radius: 1em;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  font-size: 2em;
+  font-weight: 600;
+  color: white;
+  border: 0.1em solid black;
+  background-color: red;
+}
+
+.countText {
+  vertical-align: middle;
+  font-size: 2em;
+  font-weight: 600;
+  height: 2.5em;
+  color: white;
 }
