@@ -30,7 +30,7 @@ class Price extends Component {
       <div className="App">
         <UserCount roomname={this.props.roomname} />
         <div className="appQuestion">What are you in the mood for?</div>
-        <div style={{ marginLeft: "32%" }}>{categories}</div>
+        <div>{categories}</div>
         <br />
         <button onClick={() => this.props.updateCurrent('Price')} className="backButton"> Back</button>
       </div>
