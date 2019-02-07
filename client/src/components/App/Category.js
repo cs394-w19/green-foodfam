@@ -11,7 +11,15 @@ class Price extends Component {
   }
 
   render() {
-    const yelpList = ["Mexican", "Thai", "American"];
+    const yelpList = ['Mexican', 
+    'Thai', 
+    'American', 
+    'Chinese',
+    'Indian',
+    'Korean',
+    'Seafood',
+    'Vegetarian',
+    'Japanese'];
     const categories = yelpList.map((category, i) => {
       return (
         <div onClick={()=>this.onComplete(category)} key={i} className="goButton">{category}</div>

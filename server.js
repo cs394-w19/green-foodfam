@@ -73,7 +73,13 @@ app.post("/create/room", async (req, res) => {
             category: {
                 American: 0,
                 Mexican: 0,
-                Thai: 0
+                Thai: 0,
+                Chinese: 0,
+                Indian: 0,
+                Korean: 0,
+                Seafood: 0,
+                Vegetarian: 0,
+                Japanese: 0
             },
             location: location,
             totalPrice: 0,

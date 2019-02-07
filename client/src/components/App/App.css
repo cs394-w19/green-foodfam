@@ -17,7 +17,7 @@ a {
 .appQuestion {
   font-size: 32pt;
   font-weight: 900;
-  padding: 30% 20px 10px 20px;
+  padding: 20px 20px 10px 20px;
 }
 
 .appQuestion2 {
@@ -115,7 +115,8 @@ a {
   color: #fc8888;
   font-size: 16pt;
   font-weight: 600;
-  margin-top: 40px;
+  margin-top: 10px;
+  margin-bottom: 20px;
   border: 0;
   box-shadow: 1px 1px 30px -3px #666;
   cursor: pointer;
