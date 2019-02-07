@@ -120,7 +120,6 @@ class App extends Component {
         location: null,
         price: null,
         category: null,
-        current: "Home",
         isOwner: null,
         name: null,
         roomname: null,
