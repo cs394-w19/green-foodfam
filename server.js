@@ -84,7 +84,6 @@ app.post("/create/room", async (req, res) => {
         Japanese: 0
       },
       location: location,
-      totalPrice: 0,
       users: {},
       userPrices: {},
       count: 0
@@ -182,22 +181,10 @@ app.post("/update/preference", async (req, res) => {
     const priceRange = req.body.priceRange;
     const category = req.body.category;
     var updates = {};
-    var prevPriceTotal = 0;
     var prevCategory = 0;
-    var priceRef = db.ref("/data/" + roomName + "/totalPrice");
     var categoryRef = db.ref("/data/" + roomName + "/category/" + category);
     var roomRef = ref.child(roomName);
     var returnList = [];
-    //get previous priceTotal
-    priceRef.on(
-      "value",
-      function (snapshot) {
-        prevPriceTotal = snapshot.val();
-      },
-      function (errorObject) {
-        console.log("The read failed: " + errorObject.code);
-      }
-    );
 
     categoryRef.on(
       "value",
@@ -209,7 +196,6 @@ app.post("/update/preference", async (req, res) => {
       }
     );
 
-    updates["/totalPrice"] = Number(priceRange) + Number(prevPriceTotal);
     updates["/userPrices/" + userName] = priceRange;
     updates["/users/" + userName] = 1;
     updates["/category/" + category] = Number(prevCategory) + 1;
@@ -301,13 +287,10 @@ app.post("/result", async (req, res) => {
             data.category[a] > data.category[b] ? a : b
           );
 
-          // Find the total number of users on firebase
-          const totalUsers = Object.keys(data.users).length;
-
           // Get the location from firebase
           const location = data.location;
 
-          // Get minimum price
+          // Get the minimum price
           const prices = Object.values(data.userPrices);
           const price = Math.min(...prices);
 
