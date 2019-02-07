@@ -212,35 +212,6 @@ app.post("/update/preference", async (req, res) => {
     updates["/category/" + category] = Number(prevCategory) + 1;
     await roomRef.update(updates);
 
-    // roomRef.on(
-    //   "value",
-    //   function (snapshot) {
-    //     returnList = [];
-    //     roomJSON = snapshot.val();
-    //     //console.log(roomJSON);
-    //     console.log("194returnlist: " + returnList);
-    //   },
-    //   function (errorObject) {
-    //     console.log("The read failed: " + errorObject.code);
-    //   }
-    // );
-    // var room = JSON.parse(JSON.stringify(roomJSON));
-    // var users = {};
-    // while (true) {
-    //   if (room.users != null) {
-    //     users = new Map(Object.entries(room.users));
-    //     break;
-    //   } else {
-    //     console.log("room user null");
-    //   }
-    // }
-
-    // users.forEach((value, key, map) => {
-    //   if (value == 0) {
-    //     returnList.push(key);
-    //   }
-    // });
-    // res.send({ returnList });
     res.send({
       down: true
     });
