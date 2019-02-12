@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Geosuggest from 'react-geosuggest';
 
 class App extends Component {
   state = {
@@ -20,12 +21,18 @@ class App extends Component {
     return (
       <div className="App">
         <div className="appQuestion">Enter your group's location:</div>
-        <input
-          className="locationInput"
-          type="text"
-          placeholder={this.state.location}
-          onChange={e => this.updateLocation(e)}
-        />
+        < Geosuggest
+            className="locationInput"
+            onSuggestSelect={label => this.updateLocation(label)}
+            />
+            {/*
+        // <input
+        //   className="locationInput"
+        //   type="text"
+        //   placeholder={this.state.location}
+        //   onChange={e => this.updateLocation(e)}
+        // />
+        */}
 
         <br />
         <button onClick={()=>this.onComplete()} className="goButton">Start</button>
